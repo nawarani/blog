@@ -16,18 +16,113 @@
   <label>2019-09-12</label>
   <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">chart</span>
+<span class="kn">from</span> <span class="nn">IPython.core.display</span> <span class="kn">import</span> <span class="n">HTML</span>
 </pre></div>
 
 
-<div class="highlight"><pre><span></span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span>
-    <span class="p">[</span><span class="s1">&#39;Ryan&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">]</span>
-    <span class="p">[</span><span class="s1">&#39;Hock&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">]</span>
-    <span class="p">[</span><span class="s1">&#39;Kavitha&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">]</span>
-    <span class="p">[</span><span class="s1">&#39;Anika&#39;</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">]</span>
+<div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span>
+    <span class="p">[</span><span class="s1">&#39;Ryan&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">],</span>
+    <span class="p">[</span><span class="s1">&#39;Hock&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">],</span>
+    <span class="p">[</span><span class="s1">&#39;Kavitha&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">],</span>
+    <span class="p">[</span><span class="s1">&#39;Anika&#39;</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">],</span>
     <span class="p">[</span><span class="s1">&#39;Benoit&#39;</span><span class="p">,</span> <span class="s1">&#39;e&#39;</span><span class="p">]</span>
-<span class="p">]</span>
+<span class="p">])</span>
+<span class="n">df</span>
 </pre></div>
 
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>0</th>
+      <th>1</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Ryan</td>
+      <td>a</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Hock</td>
+      <td>b</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Kavitha</td>
+      <td>c</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Anika</td>
+      <td>d</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Benoit</td>
+      <td>e</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="highlight"><pre><span></span><span class="n">HTML</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">to_html</span><span class="p">())</span>
+</pre></div>
+
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>0</th>
+      <th>1</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Ryan</td>
+      <td>a</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Hock</td>
+      <td>b</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Kavitha</td>
+      <td>c</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Anika</td>
+      <td>d</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Benoit</td>
+      <td>e</td>
+    </tr>
+  </tbody>
+</table>
 
 <p><img alt="" src="https://vignette.wikia.nocookie.net/leagueoflegends/images/c/c4/Nunu_OriginalSkin.jpg/revision/latest?cb=20180814202011"></p>
  </div>
