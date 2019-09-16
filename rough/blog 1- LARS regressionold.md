@@ -124,7 +124,8 @@ sns.heatmap(X.corr(), mask = mask, annot = True);
 ```
 
 
-![png](images/output_4_0.png)
+<!-- ![png](images/output_4_0.png) -->
+<img src="images/output_4_0.png" alt="drawing" width=500/>
 
 
 For this example, we are going to use RM, LSTAT, PTRATIO, CHAS and INDUS columns to predict target.
@@ -132,8 +133,9 @@ For this example, we are going to use RM, LSTAT, PTRATIO, CHAS and INDUS columns
 
 ```python
 # train test split
-X_new = X[X.columns]
-X_train, X_test, y_train, y_test = train_test_split(X_new, y, test_size=0.3, random_state=42)
+X_new = pd.DataFrame([X.RM, X.LSTAT, X.PTRATIO, X.INDUS, X.CHAS])
+X_new = X_new.T
+X_train, X_test, y_train, y_test = train_test_split(X_new.values, y, test_size=0.7, random_state=42)
 ```
 
 
@@ -150,34 +152,30 @@ from sklearn.metrics import r2_score
 # Generate predictions in lars cv
 lars_model = LarsCV(cv = 5)
 lars_model = lars_model.fit(X_train, y_train)
-y_hat_test = lars_model.predict(X_test)
-y_hat_train = lars_model.predict(X_train)
+lars_model_preds = lars_model.predict(X_test)
+lars_model_preds_train = lars_model.predict(X_train)
 
 # Evaluate model.
-print(r2_score(y_train, y_hat_train))
-print(r2_score(y_test, y_hat_test))
+print(r2_score(y_test, lars_model_preds))
+print(r2_score(y_train, lars_model_preds_train))
 ```
 
-    0.7434997532004697
-    0.7112260057484925
+    0.6609112437642655
+    0.7244596309093461
     
 
-From the values above, we can see that our model is predicting the train set better than test set, implying overfit. To not overfit, we need to take off some of the features and see if the model works better. So we will call the coefficients for the lars model and see which features should be kept.
+From the values above, we can see that our model is predicting the train set better than the actual data in train set. To not overfit like we are doing right now, we need to take off some of the features and see if the model works better. So we will call the coefficients for the lars model and see which features should be taken off.
 
 
 ```python
 # get the coeff so we can select features
-np.set_printoptions(suppress = True)
 lars_model.coef_
 ```
 
 
 
 
-    array([ -0.1334701 ,   0.03580891,   0.04952265,   3.11983512,
-           -15.4170609 ,   4.05719923,  -0.01082084,  -1.38599824,
-             0.24272734,  -0.00870223,  -0.91068521,   0.01179412,
-            -0.54711331])
+    array([ 5.26082253, -0.49471453, -0.98458849,  0.        ,  4.2806216 ])
 
 
 
@@ -186,8 +184,9 @@ Let's try this model again, without the PTRATIO and INDUS features.
 
 ```python
 # train test split
-X_new = X[['NOX','RM', 'CHAS', 'DIS']]
-X_train, X_test, y_train, y_test = train_test_split(X_new, y, test_size=0.3, random_state=42)
+X_new = pd.DataFrame([X.RM, X.LSTAT, X.CHAS])
+X_new = X_new.T
+X_train, X_test, y_train, y_test = train_test_split(X_new.values, y, test_size=0.7, random_state=42)
 ```
 
 
@@ -199,10 +198,13 @@ lars_model_preds = lars_model.predict(X_test)
 lars_model_preds_train = lars_model.predict(X_train)
 
 # Evaluate model.
-print(r2_score(y_train, lars_model_preds_train))
 print(r2_score(y_test, lars_model_preds))
+print(r2_score(y_train, lars_model_preds_train))
 ```
 
-    0.5637706488700117
-    0.5491875651414488
+    0.6281183361898083
+    0.6736160473390879
     
+
+
+The feature selection through larscv has helped us with overfitting in this case.

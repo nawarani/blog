@@ -97,14 +97,11 @@ If we head over to <a href="https://www.w3cschool.cn/doc_scikit_learn/scikit_lea
 </pre></div>
 
 
-<!-- ![png](images/output_4_0.png) -->
-
-<p><img src="images/output_4_0.png" alt="drawing" width=500/></p>
+<p><img alt="png" src="images/output_4_0.png"></p>
 <p>For this example, we are going to use RM, LSTAT, PTRATIO, CHAS and INDUS columns to predict target.</p>
 <div class="highlight"><pre><span></span><span class="c1"># train test split</span>
-<span class="n">X_new</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span><span class="n">X</span><span class="o">.</span><span class="n">RM</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">LSTAT</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">PTRATIO</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">INDUS</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">CHAS</span><span class="p">])</span>
-<span class="n">X_new</span> <span class="o">=</span> <span class="n">X_new</span><span class="o">.</span><span class="n">T</span>
-<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X_new</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">X_new</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X_new</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
 </pre></div>
 
 
@@ -119,35 +116,38 @@ If we head over to <a href="https://www.w3cschool.cn/doc_scikit_learn/scikit_lea
 <div class="highlight"><pre><span></span><span class="c1"># Generate predictions in lars cv</span>
 <span class="n">lars_model</span> <span class="o">=</span> <span class="n">LarsCV</span><span class="p">(</span><span class="n">cv</span> <span class="o">=</span> <span class="mi">5</span><span class="p">)</span>
 <span class="n">lars_model</span> <span class="o">=</span> <span class="n">lars_model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
-<span class="n">lars_model_preds</span> <span class="o">=</span> <span class="n">lars_model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
-<span class="n">lars_model_preds_train</span> <span class="o">=</span> <span class="n">lars_model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
+<span class="n">y_hat_test</span> <span class="o">=</span> <span class="n">lars_model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+<span class="n">y_hat_train</span> <span class="o">=</span> <span class="n">lars_model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
 
 <span class="c1"># Evaluate model.</span>
-<span class="k">print</span><span class="p">(</span><span class="n">r2_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">lars_model_preds</span><span class="p">))</span>
-<span class="k">print</span><span class="p">(</span><span class="n">r2_score</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="n">lars_model_preds_train</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="n">r2_score</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="n">y_hat_train</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="n">r2_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_hat_test</span><span class="p">))</span>
 </pre></div>
 
 
-<div class="highlight"><pre><span></span><span class="mi">0</span><span class="p">.</span><span class="mi">6609112437642655</span>
-<span class="mi">0</span><span class="p">.</span><span class="mi">7244596309093461</span>
+<div class="highlight"><pre><span></span><span class="mi">0</span><span class="p">.</span><span class="mi">7434997532004697</span>
+<span class="mi">0</span><span class="p">.</span><span class="mi">7112260057484925</span>
 </pre></div>
 
 
-<p>From the values above, we can see that our model is predicting the train set better than the actual data in train set. To not overfit like we are doing right now, we need to take off some of the features and see if the model works better. So we will call the coefficients for the lars model and see which features should be taken off.</p>
+<p>From the values above, we can see that our model is predicting the train set better than test set, implying overfit. To not overfit, we need to take off some of the features and see if the model works better. So we will call the coefficients for the lars model and see which features should be kept.</p>
 <div class="highlight"><pre><span></span><span class="c1"># get the coeff so we can select features</span>
+<span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">suppress</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
 <span class="n">lars_model</span><span class="o">.</span><span class="n">coef_</span>
 </pre></div>
 
 
-<div class="highlight"><pre><span></span><span class="nb">array</span><span class="p">([</span> <span class="mi">5</span><span class="p">.</span><span class="mi">26082253</span><span class="p">,</span> <span class="o">-</span><span class="mi">0</span><span class="p">.</span><span class="mi">49471453</span><span class="p">,</span> <span class="o">-</span><span class="mi">0</span><span class="p">.</span><span class="mi">98458849</span><span class="p">,</span>  <span class="mi">0</span><span class="p">.</span>        <span class="p">,</span>  <span class="mi">4</span><span class="p">.</span><span class="mi">2806216</span> <span class="p">])</span>
+<div class="highlight"><pre><span></span><span class="nb">array</span><span class="p">([</span> <span class="o">-</span><span class="mi">0</span><span class="p">.</span><span class="mi">1334701</span> <span class="p">,</span>   <span class="mi">0</span><span class="p">.</span><span class="mi">03580891</span><span class="p">,</span>   <span class="mi">0</span><span class="p">.</span><span class="mi">04952265</span><span class="p">,</span>   <span class="mi">3</span><span class="p">.</span><span class="mi">11983512</span><span class="p">,</span>
+       <span class="o">-</span><span class="mi">15</span><span class="p">.</span><span class="mi">4170609</span> <span class="p">,</span>   <span class="mi">4</span><span class="p">.</span><span class="mi">05719923</span><span class="p">,</span>  <span class="o">-</span><span class="mi">0</span><span class="p">.</span><span class="mi">01082084</span><span class="p">,</span>  <span class="o">-</span><span class="mi">1</span><span class="p">.</span><span class="mi">38599824</span><span class="p">,</span>
+         <span class="mi">0</span><span class="p">.</span><span class="mi">24272734</span><span class="p">,</span>  <span class="o">-</span><span class="mi">0</span><span class="p">.</span><span class="mi">00870223</span><span class="p">,</span>  <span class="o">-</span><span class="mi">0</span><span class="p">.</span><span class="mi">91068521</span><span class="p">,</span>   <span class="mi">0</span><span class="p">.</span><span class="mi">01179412</span><span class="p">,</span>
+        <span class="o">-</span><span class="mi">0</span><span class="p">.</span><span class="mi">54711331</span><span class="p">])</span>
 </pre></div>
 
 
 <p>Let's try this model again, without the PTRATIO and INDUS features.</p>
 <div class="highlight"><pre><span></span><span class="c1"># train test split</span>
-<span class="n">X_new</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span><span class="n">X</span><span class="o">.</span><span class="n">RM</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">LSTAT</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">CHAS</span><span class="p">])</span>
-<span class="n">X_new</span> <span class="o">=</span> <span class="n">X_new</span><span class="o">.</span><span class="n">T</span>
-<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X_new</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">X_new</span> <span class="o">=</span> <span class="n">X</span><span class="p">[[</span><span class="s1">&#39;NOX&#39;</span><span class="p">,</span><span class="s1">&#39;RM&#39;</span><span class="p">,</span> <span class="s1">&#39;CHAS&#39;</span><span class="p">,</span> <span class="s1">&#39;DIS&#39;</span><span class="p">]]</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X_new</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
 </pre></div>
 
 
@@ -158,17 +158,14 @@ If we head over to <a href="https://www.w3cschool.cn/doc_scikit_learn/scikit_lea
 <span class="n">lars_model_preds_train</span> <span class="o">=</span> <span class="n">lars_model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
 
 <span class="c1"># Evaluate model.</span>
-<span class="k">print</span><span class="p">(</span><span class="n">r2_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">lars_model_preds</span><span class="p">))</span>
 <span class="k">print</span><span class="p">(</span><span class="n">r2_score</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="n">lars_model_preds_train</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="n">r2_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">lars_model_preds</span><span class="p">))</span>
 </pre></div>
 
 
-<div class="highlight"><pre><span></span><span class="mi">0</span><span class="p">.</span><span class="mi">6281183361898083</span>
-<span class="mi">0</span><span class="p">.</span><span class="mi">6736160473390879</span>
+<div class="highlight"><pre><span></span><span class="mi">0</span><span class="p">.</span><span class="mi">5637706488700117</span>
+<span class="mi">0</span><span class="p">.</span><span class="mi">5491875651414488</span>
 </pre></div>
-
-
-<p>The feature selection through larscv has helped us with overfitting in this case.</p>
  </div>
 </div>
  </div>
