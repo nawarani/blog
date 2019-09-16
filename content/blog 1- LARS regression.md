@@ -1,3 +1,6 @@
+Title: Blog 1- Least Angle Regression LARS
+Date: 09-16-2019 
+Slug: blog-1
 
 ## What is LARS?
 

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
- <title>Least Angle Regression (LARS)</title>
+ <title>Blog 1- Least Angle Regression LARS</title>
  <!-- Latest compiled and minified CSS -->
  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
  <div class="container">
@@ -12,38 +12,156 @@
  <div class="container">
 <div class="row">
  <div class="col-md-8">
-  <h3>Least Angle Regression (LARS)</h3>
-  <label>2019-09-14</label>
-  <p>Before we get into what lars regression is, we must take a peek into forward selection and forward stagewise regression. For simplicity, we will be using a simplistic example of black friday shopping. You are shopping on black friday since there is sale on everything. We are modelling your path as you buy these items: A keyboard, a mouse and a graphics card(in order of priority, graphics card is optional). Keyboard will be bought from best buy and the graphics card and cooling system will be bought from canada computers.</p>
+  <h3>Blog 1- Least Angle Regression LARS</h3>
+  <label>2019-09-16</label>
+  <h2>What is LARS?</h2>
+<p>Before we get into what lars is, we must take a peek into forward selection and forward stagewise regression. LARs treats each feature of the data as a vector and moves in a direction to minimizethe difference between its angle with equally likely features. For simplicity, we will be using a example of black friday shopping(featuring my ms paint skills). You are shopping on black friday since there is sale on everything. We are modelling your path as you buy these items: A keyboard, a mouse and a graphics card(in order of priority, graphics card is optional). Keyboard will be bought from best buy and the graphics card and cooling system will be bought from canada computers. The first part of this blog provides a intuitive explanation of how LARs operates, for actual example using code, quickly scroll to the bottom.</p>
 <p><strong>Forward selection</strong> is a selection method where in each step the model takes in the variable with highest correlation entirely and continues to predict. This is great, except when there are two correlated variables. In the case of multiple correlated variables, forward selection ends up ignoring the other ones, since after adding one of the correlated variable, the rest don't offer much explanation to the model anymore.</p>
 <p>Here, you've gone into best buy to buy a keyboard, since it is your biggest concern. Since the mouse is highly likely to be found in best buy as well, forward selection will skip mouse and predict that you will go to canada computers next. Since it will skip the path inside best buy towards the mouse section, it won't be as accurate. </p>
+<p><img alt="" src="https://i.imgur.com/bnlSHBX.jpg"></p>
 <p><strong>Forward stagewise regression</strong> on the other hand, solves this problem by only adding a predetermined amount of a variable. Since it doesn't add the entirity of a variable, other correlated variables are still considered and added in accordingly. But due to the process, forward stagewise ends up being very inefficient when there are a lot of variables to consider.</p>
 <p>In this case, our model is being very cautious of your path and updating it every step at a time. Since you are likely to go into best buy to find keyboard first, it will predict your path to best buy one step at a time. At every step it will reevaluate whether you are closer to the store for keyboard, mouse or graphics card, and update its path accordingly. This is great, since this time around the model will be more accurate in its prediction. But if we had 50 things in our list, this model would quickly become burdensome, having to calculate at each step. </p>
+<p><img alt="" src="https://i.imgur.com/DeW8EPm.jpg"></p>
 <p>LARS or <strong>Least Angle Regression</strong> aims to solve the limitation of both of the previously mentioned methods. Instead of moving in small predetermined amounts of a variable, it hops towards the most correleated variable until another variable becomes just as correlated. At this stage it changes direction in a way that it forms equal angles(equal correlation) with each variable. Thus the name, least angle regression.</p>
 <p>In case of LARS, we will be keeping mouse and graphics card as well, but this time we will modelling our path towards best buy for the keyboard, until we reach best buy. At best buy, buying both mouse and keyboard are equally likely to be bought, so the model will predict a path equally distant from the mouse section and the keyboard. So if you decide to buy the mouse first and then the keyboard, the models path will be a closer approximation than a model that only predicts your path to keyboard. Afterward buying the keyboard and the mouse you're equally likely to go to home or to canada computers. The model will continue to model a equidistant path for your home and canada computers. Since the path revision only happens when two variables becaome equally correlated, it's more accurate than forward selection and lighter/more efficient than forward stagewise regession.</p>
+<p><img alt="" src="https://i.imgur.com/zHUrPyv.jpg"></p>
 <p>This may sound similar to Lasso, which it is, since Lasso operates in a similar way. The difference in Lasso is that it drops a variable once its prediction capacity hits zero. LARS can be modified slightly to achieve both the effects of Lasso and forward stagewise regression.</p>
-<p>when we use it</p>
-<p><strong>how we use it:</strong>
-If we go to the sklearn <a href="https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.Lars.html">docs</a>, we will find:</p>
+<h2>When do we use LARS</h2>
+<p>As much as understanding what LARS method is helps us, we are obviously more interested in when to use it. Since LARS is very similar to Lasso and forward stagewise, often times they will produce similar if not same results. In general, LARS is picked over forward stagewise when there is a large number of variables to account for. The decision between lars and lasso seems more dataset dependant, so it is recommended that both methods are tested before using one.
+If we head over to <a href="https://www.w3cschool.cn/doc_scikit_learn/scikit_learn-modules-linear_model.html?lang=en#least-angle-regression">W3Cschool</a>, we'll find that the strengths of LARs model are:</p>
+<ul>
+<li>LARs is very useful in cases where the number of features are greater than the number of points available for analysis.</li>
+<li>It is as efficient as forward selection, with similar order of complexity as ordinary least squares method.</li>
+<li>As mentioned before, LARS can be easily modified to function similar to other methods such as Lasso.</li>
+<li>Intuitively thinking, if two variables correlate to the prediction equally, the prediction should weigh them equally. In that sense, LARs makes intuitive sense as it increases their coefficients by the same amounts.</li>
+</ul>
+<p>However, LARs is based on iterative operations, making it especially susceptible to noise.</p>
+<h2>How do we use it</h2>
+<p>If we go to the sklearn <a href="https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.Lars.html">docs</a>, we will find:</p>
 <p><em>sklearn.linear_model.Lars(fit_intercept=True, verbose=False, normalize=True, precompute=’auto’, n_nonzero_coefs=500, eps=2.220446049250313e-16, copy_X=True, fit_path=True, positive=False)</em></p>
 <p>no arguments are required for lars, but you can:</p>
-<p><strong>fit_intercept</strong>: default = False
-Takes boolian values. Default value is false, meaning no intercept will be calculated or used in calculations. Data is expected to be centred.</p>
-<p><strong>normalize</strong>: default= True
-normalizes data when fit_intercept is set to true. For standardized data, use sklearn.preprocessing.StandardScaler before calling lars with normalize = False.</p>
+<p><strong>fit_intercept</strong>: default = False</p>
+<p>Takes boolian values. Default value is false, meaning no intercept will be calculated or used in calculations. Data is expected to be centred.</p>
+<p><strong>normalize</strong>: default= True</p>
+<p>normalizes data when fit_intercept is set to true. For standardized data, use sklearn.preprocessing.StandardScaler before calling lars with normalize = False.</p>
 <p><strong>precompute</strong>: True, False, 'auto', array(gram matrix)</p>
 <p>Gram matrix is helpful for determining the linear independance, where the set of vectors are linearly independant if and only if the determinnat of Gram matric is non-zero(source: Horn, Roger A.; Johnson, Charles R. (2013). "7.2 Characterizations and Properties". Matrix Analysis (Second Edition). Cambridge University Press. ISBN 978-0-521-83940-2).</p>
-<p><strong>copy_X</strong>: default = True
-Works on a copy of X. If set to false, the original datset may be overwritten.</p>
-<p><strong>fit_path</strong>: default = True
-copies the entire path to coeff_path. Setting value to false helps speed up process for large datasets, especially with a small <em>alpha</em>.</p>
+<p><strong>copy_X</strong>: default = True</p>
+<p>Works on a copy of X. If set to false, the original datset may be overwritten.</p>
+<p><strong>fit_path</strong>: default = True</p>
+<p>copies the entire path to coeff_path. Setting value to false helps speed up process for large datasets, especially with a small <em>alpha</em>.</p>
+<p>For more, check out the <a href="https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.Lars.html">docs</a>!</p>
 <p><strong>Methods</strong></p>
-<p>fit(X, y)
-fits the model using given X, y training data</p>
-<p>predict(X)
-returns prediction values based on the model</p>
-<p>score(X, y) 
-returns r2 score of prediction</p>
+<p>fit(X, y)</p>
+<p>fits the model using given X, y training data</p>
+<p>predict(X)</p>
+<p>returns prediction values based on the model</p>
+<p>score(X, y) </p>
+<p>returns r2 score of prediction</p>
+<p>Now that we know the formula, let's see LARs in action!</p>
+<div class="highlight"><pre><span></span><span class="c1"># imports</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+<span class="c1"># from scipy import stats</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="kn">as</span> <span class="nn">sns</span>
+
+<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LinearRegression</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+
+<span class="o">%</span><span class="n">config</span> <span class="n">InlineBackend</span><span class="o">.</span><span class="n">figure_format</span> <span class="o">=</span> <span class="s1">&#39;retina&#39;</span>
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;fivethirtyeight&#39;</span><span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">sklearn.datasets</span> <span class="kn">import</span> <span class="n">load_boston</span>
+<span class="n">boston</span> <span class="o">=</span> <span class="n">load_boston</span><span class="p">()</span>
+
+<span class="n">X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">boston</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">boston</span><span class="o">.</span><span class="n">feature_names</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">boston</span><span class="o">.</span><span class="n">target</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="c1"># heat map for a general correlation overview</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+<span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">corr</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
+<span class="n">mask</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">triu_indices_from</span><span class="p">(</span><span class="n">mask</span><span class="p">)]</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">corr</span><span class="p">(),</span> <span class="n">mask</span> <span class="o">=</span> <span class="n">mask</span><span class="p">,</span> <span class="n">annot</span> <span class="o">=</span> <span class="bp">True</span><span class="p">);</span>
+</pre></div>
+
+
+<p><img alt="png" src="output_4_0.png"></p>
+<p>For this example, we are going to use RM, LSTAT, PTRATIO, CHAS and INDUS columns to predict target.</p>
+<div class="highlight"><pre><span></span><span class="c1"># train test split</span>
+<span class="n">X_new</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span><span class="n">X</span><span class="o">.</span><span class="n">RM</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">LSTAT</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">PTRATIO</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">INDUS</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">CHAS</span><span class="p">])</span>
+<span class="n">X_new</span> <span class="o">=</span> <span class="n">X_new</span><span class="o">.</span><span class="n">T</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X_new</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="c1"># imports</span>
+<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">Lars</span>
+<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LarsCV</span>
+<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">lars_path</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">r2_score</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="c1"># Generate predictions in lars cv</span>
+<span class="n">lars_model</span> <span class="o">=</span> <span class="n">LarsCV</span><span class="p">(</span><span class="n">cv</span> <span class="o">=</span> <span class="mi">5</span><span class="p">)</span>
+<span class="n">lars_model</span> <span class="o">=</span> <span class="n">lars_model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="n">lars_model_preds</span> <span class="o">=</span> <span class="n">lars_model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+<span class="n">lars_model_preds_train</span> <span class="o">=</span> <span class="n">lars_model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
+
+<span class="c1"># Evaluate model.</span>
+<span class="k">print</span><span class="p">(</span><span class="n">r2_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">lars_model_preds</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="n">r2_score</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="n">lars_model_preds_train</span><span class="p">))</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="mi">0</span><span class="p">.</span><span class="mi">6609112437642655</span>
+<span class="mi">0</span><span class="p">.</span><span class="mi">7244596309093461</span>
+</pre></div>
+
+
+<p>From the values above, we can see that our model is predicting the train set better than the actual data in train set. To not overfit like we are doing right now, we need to take off some of the features and see if the model works better. So we will call the coefficients for the lars model and see which features should be taken off.</p>
+<div class="highlight"><pre><span></span><span class="c1"># get the coeff so we can select features</span>
+<span class="n">lars_model</span><span class="o">.</span><span class="n">coef_</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="nb">array</span><span class="p">([</span> <span class="mi">5</span><span class="p">.</span><span class="mi">26082253</span><span class="p">,</span> <span class="o">-</span><span class="mi">0</span><span class="p">.</span><span class="mi">49471453</span><span class="p">,</span> <span class="o">-</span><span class="mi">0</span><span class="p">.</span><span class="mi">98458849</span><span class="p">,</span>  <span class="mi">0</span><span class="p">.</span>        <span class="p">,</span>  <span class="mi">4</span><span class="p">.</span><span class="mi">2806216</span> <span class="p">])</span>
+</pre></div>
+
+
+<p>Let's try this model again, without the PTRATIO and INDUS features.</p>
+<div class="highlight"><pre><span></span><span class="c1"># train test split</span>
+<span class="n">X_new</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span><span class="n">X</span><span class="o">.</span><span class="n">RM</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">LSTAT</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">CHAS</span><span class="p">])</span>
+<span class="n">X_new</span> <span class="o">=</span> <span class="n">X_new</span><span class="o">.</span><span class="n">T</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X_new</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="c1"># actual lars cv code</span>
+<span class="n">lars_model</span> <span class="o">=</span> <span class="n">LarsCV</span><span class="p">(</span><span class="n">cv</span> <span class="o">=</span> <span class="mi">5</span><span class="p">)</span>
+<span class="n">lars_model</span> <span class="o">=</span> <span class="n">lars_model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="n">lars_model_preds</span> <span class="o">=</span> <span class="n">lars_model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+<span class="n">lars_model_preds_train</span> <span class="o">=</span> <span class="n">lars_model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
+
+<span class="c1"># Evaluate model.</span>
+<span class="k">print</span><span class="p">(</span><span class="n">r2_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">lars_model_preds</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="n">r2_score</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="n">lars_model_preds_train</span><span class="p">))</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="mi">0</span><span class="p">.</span><span class="mi">6281183361898083</span>
+<span class="mi">0</span><span class="p">.</span><span class="mi">6736160473390879</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="n">The</span> <span class="n">feature</span> <span class="n">selection</span> <span class="n">through</span> <span class="n">larscv</span> <span class="n">has</span> <span class="n">helped</span> <span class="n">us</span> <span class="k">with</span> <span class="n">overfitting</span> <span class="ow">in</span> <span class="n">this</span> <span class="n">case</span><span class="o">.</span>
+</pre></div>
  </div>
 </div>
  </div>
