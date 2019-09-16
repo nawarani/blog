@@ -18,7 +18,7 @@ Here, you've gone into best buy to buy a keyboard, since it is your biggest conc
 In this case, our model is being very cautious of your path and updating it every step at a time. Since you are likely to go into best buy to find keyboard first, it will predict your path to best buy one step at a time. At every step it will reevaluate whether you are closer to the store for keyboard, mouse or graphics card, and update its path accordingly. This is great, since this time around the model will be more accurate in its prediction. But if we had 50 things in our list, this model would quickly become burdensome, having to calculate at each step. 
 
 <!-- ![](https://i.imgur.com/DeW8EPm.jpg) -->
-<img src="https://i.imgur.com/zHUrPyv.jpg" alt="drawing" width=500/>
+<img src="https://i.imgur.com/DeW8EPm.jpg" alt="drawing" width=500/>
 
 LARS or **Least Angle Regression** aims to solve the limitation of both of the previously mentioned methods. Instead of moving in small predetermined amounts of a variable, it hops towards the most correleated variable until another variable becomes just as correlated. At this stage it changes direction in a way that it forms equal angles(equal correlation) with each variable. Thus the name, least angle regression.
 
