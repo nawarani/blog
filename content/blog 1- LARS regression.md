@@ -10,19 +10,22 @@ Before we get into what lars is, we must take a peek into forward selection and 
 
 Here, you've gone into best buy to buy a keyboard, since it is your biggest concern. Since the mouse is highly likely to be found in best buy as well, forward selection will skip mouse and predict that you will go to canada computers next. Since it will skip the path inside best buy towards the mouse section, it won't be as accurate. 
 
-![](https://i.imgur.com/bnlSHBX.jpg)
+<!-- ![](https://i.imgur.com/bnlSHBX.jpg) -->
+<img src="https://i.imgur.com/bnlSHBX.jpg" alt="drawing" width=500/>
 
 **Forward stagewise regression** on the other hand, solves this problem by only adding a predetermined amount of a variable. Since it doesn't add the entirity of a variable, other correlated variables are still considered and added in accordingly. But due to the process, forward stagewise ends up being very inefficient when there are a lot of variables to consider.
 
 In this case, our model is being very cautious of your path and updating it every step at a time. Since you are likely to go into best buy to find keyboard first, it will predict your path to best buy one step at a time. At every step it will reevaluate whether you are closer to the store for keyboard, mouse or graphics card, and update its path accordingly. This is great, since this time around the model will be more accurate in its prediction. But if we had 50 things in our list, this model would quickly become burdensome, having to calculate at each step. 
 
-![](https://i.imgur.com/DeW8EPm.jpg)
+<!-- ![](https://i.imgur.com/DeW8EPm.jpg) -->
+<img src="https://i.imgur.com/zHUrPyv.jpg" alt="drawing" width=500/>
 
 LARS or **Least Angle Regression** aims to solve the limitation of both of the previously mentioned methods. Instead of moving in small predetermined amounts of a variable, it hops towards the most correleated variable until another variable becomes just as correlated. At this stage it changes direction in a way that it forms equal angles(equal correlation) with each variable. Thus the name, least angle regression.
 
 In case of LARS, we will be keeping mouse and graphics card as well, but this time we will modelling our path towards best buy for the keyboard, until we reach best buy. At best buy, buying both mouse and keyboard are equally likely to be bought, so the model will predict a path equally distant from the mouse section and the keyboard. So if you decide to buy the mouse first and then the keyboard, the models path will be a closer approximation than a model that only predicts your path to keyboard. Afterward buying the keyboard and the mouse you're equally likely to go to home or to canada computers. The model will continue to model a equidistant path for your home and canada computers. Since the path revision only happens when two variables becaome equally correlated, it's more accurate than forward selection and lighter/more efficient than forward stagewise regession.
 
-![](https://i.imgur.com/zHUrPyv.jpg)
+<!-- ![](https://i.imgur.com/zHUrPyv.jpg) -->
+<img src="https://i.imgur.com/zHUrPyv.jpg" alt="drawing" width=500/>
 
 This may sound similar to Lasso, which it is, since Lasso operates in a similar way. The difference in Lasso is that it drops a variable once its prediction capacity hits zero. LARS can be modified slightly to achieve both the effects of Lasso and forward stagewise regression.
 
@@ -121,7 +124,8 @@ sns.heatmap(X.corr(), mask = mask, annot = True);
 ```
 
 
-![png](images/output_4_0.png)
+<!-- ![png](images/output_4_0.png) -->
+<img src="images/output_4_0.png" alt="drawing" width=500/>
 
 
 For this example, we are going to use RM, LSTAT, PTRATIO, CHAS and INDUS columns to predict target.
