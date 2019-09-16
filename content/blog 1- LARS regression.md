@@ -121,7 +121,7 @@ sns.heatmap(X.corr(), mask = mask, annot = True);
 ```
 
 
-![png](output_4_0.png)
+![png](images/output_4_0.png)
 
 
 For this example, we are going to use RM, LSTAT, PTRATIO, CHAS and INDUS columns to predict target.
@@ -203,6 +203,4 @@ print(r2_score(y_train, lars_model_preds_train))
     
 
 
-```python
 The feature selection through larscv has helped us with overfitting in this case.
-```
