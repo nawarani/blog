@@ -4,15 +4,15 @@ Slug: blog-2
 
 So you can make an ROC curve in pyplot but it looks like this.
 
-![](https://i.imgur.com/3pEIjFt.png)
+<img src = "https://i.imgur.com/3pEIjFt.png" width = 900>
 
 But fear not my friends, for Altair is here to fulfill all your aesthetic needs. In this amazing* blog I will introduce the ways of plotting an ROC curve in Altair.
 
 In an ideal world, there will be an ROC curve in the [Altair example gallery](https://altair-viz.github.io/gallery/index.html), but the path to an ROC curve is harder than we wish for it to be.
 
-(*Condition may apply)
+(Condition may apply)
 
-ROC curve plots Sensitivity(True positive rate) and 1 - Specifity(False positive rate) on it's x and y axis. Before we get that, we need to first create a model. If you wish to skip all of that and get to the ROC curve, you can do that <a href="ROC">here</a>
+ROC curve plots Sensitivity(True positive rate) and 1 - Specifity(False positive rate) on it's x and y axis. Before we get that, we need to first create a model. If you wish to skip all of that and get to the ROC curve, you can do that <a href="ROC">here</a>.
 
 For this example, I am using titanic data from [Kaggle](https://www.kaggle.com/c/titanic)
 
