@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom"><title>blog</title><link href="https://nawarani.github.io/blog/" rel="alternate"></link><link href="https://nawarani.github.io/blog/feeds/all-en.atom.xml" rel="self"></link><id>https://nawarani.github.io/blog/</id><updated>2019-09-30T00:00:00-04:00</updated><entry><title>Blog 2 - Plotting ROC curve in Altair</title><link href="https://nawarani.github.io/blog/blog-2.html" rel="alternate"></link><published>2019-09-30T00:00:00-04:00</published><updated>2019-09-30T00:00:00-04:00</updated><author><name>Anika Nawar</name></author><id>tag:nawarani.github.io,2019-09-30:/blog/blog-2.html</id><summary type="html">&lt;p&gt;So you can make an ROC curve in pyplot but it looks like this.&lt;/p&gt;
-&lt;p&gt;&lt;img src = "https://i.imgur.com/3pEIjFt.png" width = 900&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src = "https://i.imgur.com/3pEIjFt.png" width = 750&gt;&lt;/p&gt;
 &lt;p&gt;But fear not my friends, for Altair is here to fulfill all your aesthetic needs. In this amazing* blog I will introduce the ways of plotting an ROC curve in Altair.&lt;/p&gt;
 &lt;p&gt;In an ideal world, there …&lt;/p&gt;</summary><content type="html">&lt;p&gt;So you can make an ROC curve in pyplot but it looks like this.&lt;/p&gt;
-&lt;p&gt;&lt;img src = "https://i.imgur.com/3pEIjFt.png" width = 900&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src = "https://i.imgur.com/3pEIjFt.png" width = 750&gt;&lt;/p&gt;
 &lt;p&gt;But fear not my friends, for Altair is here to fulfill all your aesthetic needs. In this amazing* blog I will introduce the ways of plotting an ROC curve in Altair.&lt;/p&gt;
 &lt;p&gt;In an ideal world, there will be an ROC curve in the &lt;a href="https://altair-viz.github.io/gallery/index.html"&gt;Altair example gallery&lt;/a&gt;, but the path to an ROC curve is harder than we wish for it to be.&lt;/p&gt;
 &lt;p&gt;(Condition may apply)&lt;/p&gt;
-&lt;p&gt;ROC curve plots Sensitivity(True positive rate) and 1 - Specifity(False positive rate) on it's x and y axis. Before we get that, we need to first create a model. If you wish to skip all of that and get to the ROC curve, you can do that &lt;a href="ROC"&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;ROC curve plots Sensitivity(True positive rate) and 1 - Specifity(False positive rate) on it's x and y axis. Before we get that, we need to first create a model. If you wish to skip all of that and get to the ROC curve, you can do that &lt;a href="#ROC"&gt;here&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;For this example, I am using titanic data from &lt;a href="https://www.kaggle.com/c/titanic"&gt;Kaggle&lt;/a&gt;&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c1"&gt;# imports&lt;/span&gt;
 
