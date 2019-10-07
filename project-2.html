@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <title>Project 2 - Predicting Housing Prices from Ames Housing Dataset</title>
+ <!-- Latest compiled and minified CSS -->
+ <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+ <div class="container">
+  <h1><a href="https://nawarani.github.io/blog">blog</a></h1>
+ </div>
+</head>
+<body>
+ <div class="container">
+<div class="row">
+ <div class="col-md-8">
+  <h3>Project 2 - Predicting Housing Prices from Ames Housing Dataset</h3>
+  <label>2019-10-07</label>
+  <h1>Modelling Ames housing data to predict prices</h1>
+<h3>Imports</h3>
+<div class="highlight"><pre><span></span><span class="c1"># imports</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="kn">as</span> <span class="nn">sns</span>
+<span class="kn">import</span> <span class="nn">altair</span> <span class="kn">as</span> <span class="nn">alt</span>
+
+<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">Lasso</span><span class="p">,</span> <span class="n">LassoCV</span><span class="p">,</span> <span class="n">LinearRegression</span><span class="p">,</span> <span class="n">Ridge</span><span class="p">,</span> <span class="n">RANSACRegressor</span>
+
+
+<span class="kn">from</span> <span class="nn">sklearn_pandas</span> <span class="kn">import</span> <span class="n">CategoricalImputer</span>
+<span class="kn">from</span> <span class="nn">sklearn_pandas</span> <span class="kn">import</span> <span class="n">DataFrameMapper</span>
+<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">StandardScaler</span><span class="p">,</span> <span class="n">LabelEncoder</span><span class="p">,</span> <span class="n">PolynomialFeatures</span><span class="p">,</span> <span class="n">LabelBinarizer</span><span class="p">,</span> <span class="n">OrdinalEncoder</span>
+<span class="kn">from</span> <span class="nn">sklearn.impute</span> <span class="kn">import</span> <span class="n">SimpleImputer</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="kn">from</span> <span class="nn">sklearn.neighbors</span> <span class="kn">import</span> <span class="n">KNeighborsClassifier</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">r2_score</span><span class="p">,</span> <span class="n">mean_squared_error</span><span class="p">,</span> <span class="n">mean_absolute_error</span>
+<span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="kn">import</span> <span class="n">RandomForestClassifier</span>
+
+<span class="c1"># make life easier</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s1">&#39;display.max_rows&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">FutureWarning</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">label_binarize</span><span class="p">,</span> <span class="n">LabelBinarizer</span>
+<span class="kn">from</span> <span class="nn">sklearn.base</span> <span class="kn">import</span> <span class="n">TransformerMixin</span>
+
+<span class="k">class</span> <span class="nc">SafeLabelBinarizer</span><span class="p">(</span><span class="n">TransformerMixin</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lb</span> <span class="o">=</span> <span class="n">LabelBinarizer</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lb</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">classes_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lb</span><span class="o">.</span><span class="n">classes_</span>
+
+    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="n">K</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">classes_</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;__FAKE__&#39;</span><span class="p">])</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">label_binarize</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">pos_label</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">neg_label</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">s_</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">X</span>
+
+    <span class="k">def</span> <span class="nf">fit_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+</pre></div>
+
+
+<h3>Load data</h3>
+<p>load data into pdf, only mark missing values as NaN.</p>
+<div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;data/train.csv&#39;</span><span class="p">,</span> <span class="n">na_values</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">keep_default_na</span> <span class="o">=</span> <span class="bp">False</span><span class="p">)</span>
+</pre></div>
+
+
+<h3>Clean data</h3>
+<p>drop outliers</p>
+<div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Gr Liv Area&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">4000</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+</pre></div>
+
+
+<p>find columns with NaN values</p>
+<div class="highlight"><pre><span></span><span class="n">na_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span> <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;na_values&#39;</span><span class="p">])</span>
+<span class="n">nz</span> <span class="o">=</span> <span class="n">na_df</span><span class="p">[</span><span class="s1">&#39;na_values&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span><span class="o">.</span><span class="n">nonzero</span><span class="p">()</span>
+<span class="n">na_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">nz</span><span class="p">]</span>
+</pre></div>
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>na_values</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Lot Frontage</th>
+      <td>330</td>
+    </tr>
+    <tr>
+      <th>Mas Vnr Type</th>
+      <td>22</td>
+    </tr>
+    <tr>
+      <th>Mas Vnr Area</th>
+      <td>22</td>
+    </tr>
+    <tr>
+      <th>Bsmt Qual</th>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>Bsmt Cond</th>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>Bsmt Exposure</th>
+      <td>4</td>
+    </tr>
+    <tr>
+      <th>BsmtFin Type 1</th>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>BsmtFin SF 1</th>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>BsmtFin Type 2</th>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>BsmtFin SF 2</th>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>Bsmt Unf SF</th>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>Total Bsmt SF</th>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>Bsmt Full Bath</th>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>Bsmt Half Bath</th>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>Garage Yr Blt</th>
+      <td>114</td>
+    </tr>
+    <tr>
+      <th>Garage Finish</th>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>Garage Cars</th>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>Garage Area</th>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>Garage Qual</th>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>Garage Cond</th>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<p>drop NaN values from columns with few NaN values</p>
+<div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Bsmt Qual&#39;</span><span class="p">,</span><span class="s1">&#39;Bsmt Cond&#39;</span><span class="p">,</span> <span class="s1">&#39;Bsmt Exposure&#39;</span><span class="p">,</span> <span class="s1">&#39;BsmtFin Type 1&#39;</span><span class="p">,</span> <span class="s1">&#39;BsmtFin SF 1&#39;</span><span class="p">,</span> <span class="s1">&#39;BsmtFin Type 2&#39;</span><span class="p">,</span> <span class="s1">&#39;BsmtFin SF 2&#39;</span><span class="p">,</span> <span class="s1">&#39;Bsmt Unf SF&#39;</span><span class="p">,</span> <span class="s1">&#39;Total Bsmt SF&#39;</span><span class="p">,</span><span class="s1">&#39;Bsmt Full Bath&#39;</span><span class="p">,</span> <span class="s1">&#39;Bsmt Half Bath&#39;</span><span class="p">,</span> <span class="s1">&#39;Garage Finish&#39;</span><span class="p">,</span> <span class="s1">&#39;Garage Cars&#39;</span><span class="p">,</span> <span class="s1">&#39;Garage Area&#39;</span><span class="p">,</span> <span class="s1">&#39;Garage Qual&#39;</span><span class="p">,</span> <span class="s1">&#39;Garage Cond&#39;</span><span class="p">])</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="n">na_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span> <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;na_values&#39;</span><span class="p">])</span>
+<span class="n">nz</span> <span class="o">=</span> <span class="n">na_df</span><span class="p">[</span><span class="s1">&#39;na_values&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span><span class="o">.</span><span class="n">nonzero</span><span class="p">()</span>
+<span class="n">na_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">nz</span><span class="p">]</span>
+</pre></div>
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>na_values</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Lot Frontage</th>
+      <td>330</td>
+    </tr>
+    <tr>
+      <th>Mas Vnr Type</th>
+      <td>22</td>
+    </tr>
+    <tr>
+      <th>Mas Vnr Area</th>
+      <td>22</td>
+    </tr>
+    <tr>
+      <th>Garage Yr Blt</th>
+      <td>113</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<h3>Train_test split</h3>
+<div class="highlight"><pre><span></span><span class="n">target</span> <span class="o">=</span> <span class="s1">&#39;SalePrice&#39;</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">target</span><span class="p">]</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="n">target</span><span class="p">],</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+</pre></div>
+
+
+<h3>Dataframe mapper</h3>
+<p>Dataframe mapper to impute missing values, labelbinarize nominal values, ordinal encode ordinal values, label encode binary values and standard scale continuous values</p>
+<div class="highlight"><pre><span></span><span class="n">mapper</span> <span class="o">=</span> <span class="n">DataFrameMapper</span><span class="p">([</span>
+    <span class="p">(</span><span class="s1">&#39;MS SubClass&#39;</span><span class="p">,</span> <span class="n">SafeLabelBinarizer</span><span class="p">()),</span>
+    <span class="p">(</span><span class="s1">&#39;MS Zoning&#39;</span><span class="p">,</span> <span class="n">SafeLabelBinarizer</span><span class="p">()),</span>
+    <span class="p">([</span><span class="s1">&#39;Lot Frontage&#39;</span><span class="p">],</span> <span class="p">[</span><span class="n">SimpleImputer</span><span class="p">(</span><span class="n">strategy</span> <span class="o">=</span> <span class="s1">&#39;constant&#39;</span><span class="p">,</span> <span class="n">fill_value</span> <span class="o">=</span> <span class="mi">0</span><span class="p">),</span> <span class="n">StandardScaler</span><span class="p">()]),</span>
+    <span class="p">([</span><span class="s1">&#39;Lot Area&#39;</span><span class="p">],</span> <span class="n">StandardScaler</span><span class="p">()),</span>
+    <span class="p">(</span><span class="s1">&#39;Street&#39;</span><span class="p">,</span> <span class="n">SafeLabelBinarizer</span><span class="p">()),</span>
+    <span class="p">(</span><span class="s1">&#39;Alley&#39;</span><span class="p">,</span> <span class="n">SafeLabelBinarizer</span><span class="p">()),</span>
+    <span class="p">([</span><span class="s1">&#39;Lot Shape&#39;</span><span class="p">],</span> <span class="n">OrdinalEncoder</span><span class="p">(</span><span class="n">categories</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;Reg&#39;</span><span class="p">,</span> <span class="s1">&#39;IR1&#39;</span><span class="p">,</span> <span class="s1">&#39;IR2&#39;</span><span class="p">,</span> <span class="s1">&#39;IR3&#39;</span><span class="p">]])),</span>
+    <span class="p">([</span><span class="s1">&#39;Land Contour&#39;</span><span class="p">],</span> <span class="n">OrdinalEncoder</span><span class="p">(</span><span class="n">categories</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;Lvl&#39;</span><span class="p">,</span> <span class="s1">&#39;Low&#39;</span><span class="p">,</span> <span class="s1">&#39;Bnk&#39;</span><span class="p">,</span> <span class="s1">&#39;HLS&#39;</span><span class="p">]])),</span>
+    <span class="p">([</span><span class="s1">&#39;Utilities&#39;</span><span class="p">],</span> <span class="n">SafeLabelBinarizer</span><span class="p">()),</span>
+    <span class="p">(</span><span class="s1">&#39;Lot Config&#39;</span><span class="p">,</span> <span class="n">SafeLabelBinarizer</span><span class="p">()),</span>
+    <span class="p">([</span><span class="s1">&#39;Land Slope&#39;</span><span class="p">],</span> <span class="n">OrdinalEncoder</span><span class="p">(</span><span class="n">categories</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;Gtl&#39;</span><span class="p">,</span> <span class="s1">&#39;Mod&#39;</span><span class="p">,</span> <span class="s1">&#39;Sev&#39;</span><span class="p">]])),</span>
+    <span class="p">(</span><span class="s1">&#39;Neighborhood&#39;</span><span class="p">,</span> <span class="n">SafeLabelBinarizer</span><span class="p">()),</span>
+    <span class="p">(</span><span class="s1">&#39;Condition 1&#39;</span><span class="p">,</span> <span class="n">SafeLabelBinarizer</span><span class="p">()),</span>
+    <span class="p">(</span><span class="s1">&#39;Condition 2&#39;</span><span class="p">,</span> <span class="n">SafeLabelBinarizer</span><span class="p">()),</span>
+    <span class="p">(</span><span class="s1">&#39;Bldg Type&#39;</span><span class="p">,</span> <span class="n">SafeLabelBinarizer</span><span class="p">()),</span>
+    <span class="p">(</span><span class="s1">&#39;House Style&#39;</span><span class="p">,</span> <span class="n">SafeLabelBinarizer</span><span class="p">()),</span>
+    <span class="p">([</span><span class="s1">&#39;Overall Qual&#39;</span><span class="p">],</span> <span class="n">OrdinalEncoder</span><span class="p">(</span><span class="n">categories</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">]])),</span>
+    <span class="p">([</span><span class="s1">&#39;Overall Cond&#39;</span><span class="p">],</span> <span class="n">OrdinalEncoder</span><span class="p">(</span><span class="n">categories</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">]])),</span>
+    <span class="p">([</span><span class="s1">&#39;Year Built&#39;</span><span class="p">],</span> <span class="bp">None</span><span class="p">),</span>
+    <span class="p">([</span><span class="s1">&#39;Year Remod/Add&#39;</span><span class="p">],</span> <span class="bp">None</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Roof Style&#39;</span><span class="p">,</span> <span class="n">SafeLabelBinarizer</span><span class="p">()),</span>
+    <span class="p">(</span><span class="s1">&#39;Roof Matl&#39;</span><span class="p">,</span> <span class="n">SafeLabelBinarizer</span><span class="p">()),</span>
+    <span class="p">(</span><span class="s1">&#39;Exterior 1st&#39;</span><span class="p">,</span> <span class="n">SafeLabelBinarizer</span><span class="p">()),</span>
+    <span class="p">(</span><span class="s1">&#39;Exterior 2nd&#39;</span><span class="p">,</span> <span class="n">SafeLabelBinarizer</span><span class="p">()),</span>
+    <span class="p">([</span><span class="s1">&#39;Mas Vnr Type&#39;</span><span class="p">],</span> <span class="p">[</span><span class="n">SimpleImputer</span><span class="p">(</span><span class="n">strategy</span> <span class="o">=</span> <span class="s1">&#39;constant&#39;</span><span class="p">,</span> <span class="n">fill_value</span> <span class="o">=</span> <span class="s1">&#39;Not_applicable&#39;</span><span class="p">),</span> <span class="n">SafeLabelBinarizer</span><span class="p">()]),</span>
+    <span class="p">([</span><span class="s1">&#39;Mas Vnr Area&#39;</span><span class="p">],</span> <span class="p">[</span><span class="n">SimpleImputer</span><span class="p">(</span><span class="n">strategy</span> <span class="o">=</span> <span class="s1">&#39;constant&#39;</span><span class="p">,</span> <span class="n">fill_value</span> <span class="o">=</span> <span class="mi">0</span><span class="p">),</span> <span class="n">StandardScaler</span><span class="p">()]),</span>
+    <span class="p">([</span><span class="s1">&#39;Exter Qual&#39;</span><span class="p">],</span> <span class="n">OrdinalEncoder</span><span class="p">(</span><span class="n">categories</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;Ex&#39;</span><span class="p">,</span> <span class="s1">&#39;Gd&#39;</span><span class="p">,</span> <span class="s1">&#39;TA&#39;</span><span class="p">,</span> <span class="s1">&#39;Fa&#39;</span><span class="p">]])),</span>
+    <span class="p">([</span><span class="s1">&#39;Exter Cond&#39;</span><span class="p">],</span> <span class="n">OrdinalEncoder</span><span class="p">(</span><span class="n">categories</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;Ex&#39;</span><span class="p">,</span> <span class="s1">&#39;Gd&#39;</span><span class="p">,</span> <span class="s1">&#39;TA&#39;</span><span class="p">,</span> <span class="s1">&#39;Fa&#39;</span><span class="p">,</span> <span class="s1">&#39;Po&#39;</span><span class="p">]])),</span>
+    <span class="p">(</span><span class="s1">&#39;Foundation&#39;</span><span class="p">,</span> <span class="n">SafeLabelBinarizer</span><span class="p">()),</span>
+    <span class="p">([</span><span class="s1">&#39;Bsmt Qual&#39;</span><span class="p">],</span> <span class="n">SafeLabelBinarizer</span><span class="p">()),</span>
+    <span class="p">([</span><span class="s1">&#39;Bsmt Cond&#39;</span><span class="p">],</span> <span class="n">OrdinalEncoder</span><span class="p">(</span><span class="n">categories</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;Ex&#39;</span><span class="p">,</span> <span class="s1">&#39;Gd&#39;</span><span class="p">,</span> <span class="s1">&#39;TA&#39;</span><span class="p">,</span> <span class="s1">&#39;Fa&#39;</span><span class="p">,</span> <span class="s1">&#39;Po&#39;</span><span class="p">,</span> <span class="s1">&#39;NA&#39;</span><span class="p">]])),</span>
+    <span class="p">([</span><span class="s1">&#39;Bsmt Exposure&#39;</span><span class="p">],</span> <span class="n">OrdinalEncoder</span><span class="p">(</span><span class="n">categories</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;NA&#39;</span><span class="p">,</span> <span class="s1">&#39;No&#39;</span><span class="p">,</span> <span class="s1">&#39;Mn&#39;</span><span class="p">,</span> <span class="s1">&#39;Av&#39;</span><span class="p">,</span> <span class="s1">&#39;Gd&#39;</span><span class="p">]])),</span>
+    <span class="p">([</span><span class="s1">&#39;BsmtFin Type 1&#39;</span><span class="p">],</span> <span class="n">OrdinalEncoder</span><span class="p">(</span><span class="n">categories</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;NA&#39;</span><span class="p">,</span> <span class="s1">&#39;Unf&#39;</span><span class="p">,</span> <span class="s1">&#39;LwQ&#39;</span><span class="p">,</span> <span class="s1">&#39;Rec&#39;</span><span class="p">,</span> <span class="s1">&#39;BLQ&#39;</span><span class="p">,</span> <span class="s1">&#39;ALQ&#39;</span><span class="p">,</span><span class="s1">&#39;GLQ&#39;</span><span class="p">]])),</span>
+    <span class="p">([</span><span class="s1">&#39;BsmtFin SF 1&#39;</span><span class="p">],</span> <span class="n">StandardScaler</span><span class="p">()),</span>
+    <span class="p">([</span><span class="s1">&#39;BsmtFin Type 2&#39;</span><span class="p">],</span> <span class="p">[</span><span class="n">SimpleImputer</span><span class="p">(</span><span class="n">strategy</span> <span class="o">=</span> <span class="s1">&#39;constant&#39;</span><span class="p">,</span> <span class="n">fill_value</span> <span class="o">=</span> <span class="s1">&#39;Not_applicable&#39;</span><span class="p">),</span> <span class="n">OrdinalEncoder</span><span class="p">(</span><span class="n">categories</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;NA&#39;</span><span class="p">,</span> <span class="s1">&#39;Unf&#39;</span><span class="p">,</span> <span class="s1">&#39;LwQ&#39;</span><span class="p">,</span> <span class="s1">&#39;Rec&#39;</span><span class="p">,</span> <span class="s1">&#39;BLQ&#39;</span><span class="p">,</span> <span class="s1">&#39;ALQ&#39;</span><span class="p">,</span><span class="s1">&#39;GLQ&#39;</span><span class="p">]])]),</span>
+    <span class="p">([</span><span class="s1">&#39;BsmtFin SF 2&#39;</span><span class="p">],</span> <span class="n">StandardScaler</span><span class="p">()),</span>
+    <span class="p">([</span><span class="s1">&#39;Bsmt Unf SF&#39;</span><span class="p">],</span> <span class="n">StandardScaler</span><span class="p">()),</span>
+    <span class="p">([</span><span class="s1">&#39;Total Bsmt SF&#39;</span><span class="p">],</span> <span class="n">StandardScaler</span><span class="p">()),</span>
+    <span class="p">([</span><span class="s1">&#39;Heating&#39;</span><span class="p">],</span> <span class="n">SafeLabelBinarizer</span><span class="p">()),</span>
+    <span class="p">([</span><span class="s1">&#39;Heating QC&#39;</span><span class="p">],</span> <span class="n">OrdinalEncoder</span><span class="p">(</span><span class="n">categories</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;Ex&#39;</span><span class="p">,</span> <span class="s1">&#39;Gd&#39;</span><span class="p">,</span> <span class="s1">&#39;TA&#39;</span><span class="p">,</span> <span class="s1">&#39;Fa&#39;</span><span class="p">,</span> <span class="s1">&#39;Po&#39;</span><span class="p">]])),</span>
+    <span class="p">(</span><span class="s1">&#39;Central Air&#39;</span><span class="p">,</span> <span class="n">LabelEncoder</span><span class="p">()),</span>
+    <span class="p">([</span><span class="s1">&#39;Electrical&#39;</span><span class="p">],</span> <span class="n">OrdinalEncoder</span><span class="p">(</span><span class="n">categories</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;SBrkr&#39;</span><span class="p">,</span> <span class="s1">&#39;FuseA&#39;</span><span class="p">,</span> <span class="s1">&#39;FuseF&#39;</span><span class="p">,</span> <span class="s1">&#39;FuseP&#39;</span><span class="p">,</span> <span class="s1">&#39;Mix&#39;</span><span class="p">]])),</span>
+    <span class="p">([</span><span class="s1">&#39;1st Flr SF&#39;</span><span class="p">],</span> <span class="n">StandardScaler</span><span class="p">()),</span>
+    <span class="p">([</span><span class="s1">&#39;2nd Flr SF&#39;</span><span class="p">],</span> <span class="n">StandardScaler</span><span class="p">()),</span>
+    <span class="p">([</span><span class="s1">&#39;Low Qual Fin SF&#39;</span><span class="p">],</span> <span class="n">StandardScaler</span><span class="p">()),</span>
+    <span class="p">([</span><span class="s1">&#39;Gr Liv Area&#39;</span><span class="p">],</span> <span class="n">StandardScaler</span><span class="p">()),</span>
+    <span class="p">(</span><span class="s1">&#39;Bsmt Full Bath&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Bsmt Half Bath&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Full Bath&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Half Bath&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Bedroom AbvGr&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Kitchen AbvGr&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
+    <span class="p">([</span><span class="s1">&#39;Kitchen Qual&#39;</span><span class="p">],</span> <span class="n">OrdinalEncoder</span><span class="p">(</span><span class="n">categories</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;Fa&#39;</span><span class="p">,</span> <span class="s1">&#39;TA&#39;</span><span class="p">,</span> <span class="s1">&#39;Gd&#39;</span><span class="p">,</span> <span class="s1">&#39;Ex&#39;</span><span class="p">]])),</span>
+    <span class="p">(</span><span class="s1">&#39;TotRms AbvGrd&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
+    <span class="p">([</span><span class="s1">&#39;Functional&#39;</span><span class="p">],</span> <span class="n">SafeLabelBinarizer</span><span class="p">()),</span>
+    <span class="p">(</span><span class="s1">&#39;Fireplaces&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
+    <span class="p">([</span><span class="s1">&#39;Fireplace Qu&#39;</span><span class="p">],</span> <span class="n">OrdinalEncoder</span><span class="p">(</span><span class="n">categories</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;NA&#39;</span><span class="p">,</span> <span class="s1">&#39;Po&#39;</span><span class="p">,</span> <span class="s1">&#39;Fa&#39;</span><span class="p">,</span> <span class="s1">&#39;TA&#39;</span><span class="p">,</span> <span class="s1">&#39;Gd&#39;</span><span class="p">,</span> <span class="s1">&#39;Ex&#39;</span><span class="p">]])),</span>
+    <span class="p">(</span><span class="s1">&#39;Garage Type&#39;</span><span class="p">,</span> <span class="n">SafeLabelBinarizer</span><span class="p">()),</span>
+    <span class="p">([</span><span class="s1">&#39;Garage Yr Blt&#39;</span><span class="p">],</span> <span class="p">[</span><span class="n">SimpleImputer</span><span class="p">(</span><span class="n">strategy</span> <span class="o">=</span> <span class="s1">&#39;constant&#39;</span><span class="p">,</span> <span class="n">fill_value</span> <span class="o">=</span> <span class="mi">0</span><span class="p">),</span> <span class="n">StandardScaler</span><span class="p">()]),</span>
+    <span class="p">([</span><span class="s1">&#39;Garage Finish&#39;</span><span class="p">],</span> <span class="n">OrdinalEncoder</span><span class="p">(</span><span class="n">categories</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;NA&#39;</span><span class="p">,</span> <span class="s1">&#39;Unf&#39;</span><span class="p">,</span> <span class="s1">&#39;RFn&#39;</span><span class="p">,</span> <span class="s1">&#39;Fin&#39;</span><span class="p">]])),</span>
+    <span class="p">(</span><span class="s1">&#39;Garage Cars&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
+    <span class="p">([</span><span class="s1">&#39;Garage Area&#39;</span><span class="p">],</span> <span class="n">StandardScaler</span><span class="p">()),</span>
+    <span class="p">([</span><span class="s1">&#39;Garage Qual&#39;</span><span class="p">],</span> <span class="n">OrdinalEncoder</span><span class="p">(</span><span class="n">categories</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;Ex&#39;</span><span class="p">,</span> <span class="s1">&#39;Gd&#39;</span><span class="p">,</span> <span class="s1">&#39;TA&#39;</span><span class="p">,</span> <span class="s1">&#39;Fa&#39;</span><span class="p">,</span> <span class="s1">&#39;Po&#39;</span><span class="p">,</span> <span class="s1">&#39;NA&#39;</span><span class="p">]])),</span>
+    <span class="p">([</span><span class="s1">&#39;Garage Cond&#39;</span><span class="p">],</span> <span class="n">OrdinalEncoder</span><span class="p">(</span><span class="n">categories</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;Ex&#39;</span><span class="p">,</span> <span class="s1">&#39;Gd&#39;</span><span class="p">,</span> <span class="s1">&#39;TA&#39;</span><span class="p">,</span> <span class="s1">&#39;Fa&#39;</span><span class="p">,</span> <span class="s1">&#39;Po&#39;</span><span class="p">,</span> <span class="s1">&#39;NA&#39;</span><span class="p">]])),</span>
+    <span class="p">([</span><span class="s1">&#39;Paved Drive&#39;</span><span class="p">],</span> <span class="n">OrdinalEncoder</span><span class="p">(</span><span class="n">categories</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">,</span> <span class="s1">&#39;N&#39;</span><span class="p">]])),</span>
+    <span class="p">([</span><span class="s1">&#39;Wood Deck SF&#39;</span><span class="p">],</span> <span class="n">StandardScaler</span><span class="p">()),</span>
+    <span class="p">([</span><span class="s1">&#39;Open Porch SF&#39;</span><span class="p">],</span> <span class="n">StandardScaler</span><span class="p">()),</span>
+    <span class="p">([</span><span class="s1">&#39;Enclosed Porch&#39;</span><span class="p">],</span> <span class="n">StandardScaler</span><span class="p">()),</span>
+    <span class="p">([</span><span class="s1">&#39;3Ssn Porch&#39;</span><span class="p">],</span> <span class="n">StandardScaler</span><span class="p">()),</span>
+    <span class="p">([</span><span class="s1">&#39;Screen Porch&#39;</span><span class="p">],</span> <span class="n">StandardScaler</span><span class="p">()),</span>
+    <span class="p">([</span><span class="s1">&#39;Pool Area&#39;</span><span class="p">],</span> <span class="n">StandardScaler</span><span class="p">()),</span>
+    <span class="p">([</span><span class="s1">&#39;Pool QC&#39;</span><span class="p">],</span> <span class="n">OrdinalEncoder</span><span class="p">(</span><span class="n">categories</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;NA&#39;</span><span class="p">,</span> <span class="s1">&#39;Fa&#39;</span><span class="p">,</span> <span class="s1">&#39;TA&#39;</span><span class="p">,</span> <span class="s1">&#39;Gd&#39;</span><span class="p">,</span> <span class="s1">&#39;Ex&#39;</span><span class="p">]])),</span>
+    <span class="p">([</span><span class="s1">&#39;Fence&#39;</span><span class="p">],</span> <span class="n">OrdinalEncoder</span><span class="p">(</span><span class="n">categories</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;NA&#39;</span><span class="p">,</span> <span class="s1">&#39;MnWw&#39;</span><span class="p">,</span> <span class="s1">&#39;GdWo&#39;</span><span class="p">,</span> <span class="s1">&#39;MnPrv&#39;</span><span class="p">,</span> <span class="s1">&#39;GdPrv&#39;</span><span class="p">]])),</span>
+    <span class="p">([</span><span class="s1">&#39;Misc Feature&#39;</span><span class="p">],</span> <span class="n">SafeLabelBinarizer</span><span class="p">()),</span>
+    <span class="p">([</span><span class="s1">&#39;Misc Val&#39;</span><span class="p">],</span> <span class="n">StandardScaler</span><span class="p">()),</span>
+    <span class="p">(</span><span class="s1">&#39;Mo Sold&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Yr Sold&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Sale Type&#39;</span><span class="p">,</span> <span class="n">SafeLabelBinarizer</span><span class="p">())],</span> <span class="n">df_out</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+</pre></div>
+
+
+<h3>Naive model</h3>
+<p>House prices go up as the number of rooms increase.</p>
+<div class="highlight"><pre><span></span><span class="n">linreg</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">()</span>
+<span class="n">linreg</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">[[</span><span class="s1">&#39;Bedroom AbvGr&#39;</span><span class="p">]],</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="n">linreg</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_test</span><span class="p">[[</span><span class="s1">&#39;Bedroom AbvGr&#39;</span><span class="p">]],</span> <span class="n">y_test</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>0.007158416954324398
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="mi">8</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">X_train</span><span class="p">[[</span><span class="s1">&#39;Bedroom AbvGr&#39;</span><span class="p">]],</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Number of Bedroom aboveground&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Price of property&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Ames housing prices&#39;</span><span class="p">);</span>
+</pre></div>
+
+
+<p><img alt="png" src="output_20_0.png"></p>
+<p>It seems that the number of bedrooms can only predict the pricing of a house with 0.7% accuracy.  </p>
+<h3>Exploratory analysis</h3>
+<p>Transfrom train data with mapper.</p>
+<div class="highlight"><pre><span></span><span class="n">Z_train</span> <span class="o">=</span> <span class="n">mapper</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
+</pre></div>
+
+
+<p>Scatter plots to see relationship of features with y. The same result can be achieved through pairplot in seaborn, but doing it through a for loop allowed me to have clearer figures in reasonable sizes.</p>
+<div class="highlight"><pre><span></span><span class="n">continuous</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Lot Frontage&#39;</span><span class="p">,</span> <span class="s1">&#39;Lot Area&#39;</span><span class="p">,</span> <span class="s1">&#39;Year Built&#39;</span><span class="p">,</span> <span class="s1">&#39;Year Remod/Add&#39;</span><span class="p">,</span> <span class="s1">&#39;Mas Vnr Area&#39;</span><span class="p">,</span> <span class="s1">&#39;BsmtFin SF 1&#39;</span><span class="p">,</span> <span class="s1">&#39;BsmtFin SF 2&#39;</span><span class="p">,</span> <span class="s1">&#39;Bsmt Unf SF&#39;</span><span class="p">,</span> <span class="s1">&#39;Total Bsmt SF&#39;</span><span class="p">,</span> <span class="s1">&#39;1st Flr SF&#39;</span><span class="p">,</span> <span class="s1">&#39;2nd Flr SF&#39;</span><span class="p">,</span> <span class="s1">&#39;Low Qual Fin SF&#39;</span><span class="p">,</span> <span class="s1">&#39;Gr Liv Area&#39;</span><span class="p">,</span> <span class="s1">&#39;Garage Area&#39;</span><span class="p">,</span> <span class="s1">&#39;Wood Deck SF&#39;</span><span class="p">,</span> <span class="s1">&#39;Open Porch SF&#39;</span><span class="p">,</span> <span class="s1">&#39;Enclosed Porch&#39;</span><span class="p">,</span> <span class="s1">&#39;3Ssn Porch&#39;</span><span class="p">,</span> <span class="s1">&#39;Screen Porch&#39;</span><span class="p">,</span> <span class="s1">&#39;Pool Area&#39;</span><span class="p">,</span> <span class="s1">&#39;Misc Val&#39;</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="n">continuous</span><span class="p">:</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">Z_train</span><span class="p">[</span><span class="n">feature</span><span class="p">],</span> <span class="n">y_train</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;price&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="n">feature</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">feature</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+
+<p><img alt="png" src="images/ames/output_26_0.png"></p>
+<p><img alt="png" src="images/ames/output_26_1.png"></p>
+<p><img alt="png" src="images/ames/output_26_2.png"></p>
+<p><img alt="png" src="images/ames/output_26_3.png"></p>
+<p><img alt="png" src="images/ames/output_26_4.png"></p>
+<p><img alt="png" src="images/ames/output_26_5.png"></p>
+<p><img alt="png" src="images/ames/output_26_6.png"></p>
+<p><img alt="png" src="images/ames/output_26_7.png"></p>
+<p><img alt="png" src="images/ames/output_26_8.png"></p>
+<p><img alt="png" src="images/ames/output_26_9.png"></p>
+<p><img alt="png" src="images/ames/output_26_10.png"></p>
+<p><img alt="png" src="images/ames/output_26_11.png"></p>
+<p><img alt="png" src="images/ames/output_26_12.png"></p>
+<p><img alt="png" src="images/ames/output_26_13.png"></p>
+<p><img alt="png" src="images/ames/output_26_14.png"></p>
+<p><img alt="png" src="images/ames/output_26_15.png"></p>
+<p><img alt="png" src="images/ames/output_26_16.png"></p>
+<p><img alt="png" src="images/ames/output_26_17.png"></p>
+<p><img alt="png" src="images/ames/output_26_18.png"></p>
+<p><img alt="png" src="images/ames/output_26_19.png"></p>
+<p><img alt="png" src="images/ames/output_26_20.png"></p>
+<p>From the scatter plots Lot frontage, lot area, year built, total bsmt SF, gr living area and garage area seem to be correlated with the price.</p>
+<h3>Feature selection through RFE</h3>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.feature_selection</span> <span class="kn">import</span> <span class="n">RFE</span>
+
+<span class="n">select</span> <span class="o">=</span> <span class="n">RFE</span><span class="p">(</span><span class="n">RandomForestClassifier</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">),</span> <span class="n">n_features_to_select</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">select</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">Z_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="n">Z_train_selected</span> <span class="o">=</span> <span class="n">select</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">Z_train</span><span class="p">)</span>
+</pre></div>
+
+
+<p>Put selected columns in a df to see.</p>
+<div class="highlight"><pre><span></span><span class="n">selection</span> <span class="o">=</span> <span class="n">select</span><span class="o">.</span><span class="n">get_support</span><span class="p">()</span>
+<span class="n">select_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">Z_train</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">selection</span><span class="p">),</span> <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;feature&#39;</span><span class="p">,</span> <span class="s1">&#39;bool&#39;</span><span class="p">])</span>
+<span class="n">select_df</span><span class="p">[</span><span class="n">select_df</span><span class="p">[</span><span class="s1">&#39;bool&#39;</span><span class="p">]]</span>
+</pre></div>
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>feature</th>
+      <th>bool</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>24</th>
+      <td>Lot Area</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>99</th>
+      <td>Year Built</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>163</th>
+      <td>BsmtFin SF 1</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>166</th>
+      <td>Bsmt Unf SF</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>167</th>
+      <td>Total Bsmt SF</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>176</th>
+      <td>1st Flr SF</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>179</th>
+      <td>Gr Liv Area</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>204</th>
+      <td>Garage Yr Blt</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>207</th>
+      <td>Garage Area</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>225</th>
+      <td>Mo Sold</td>
+      <td>True</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<p>See how our model was doing without the selected columns:</p>
+<div class="highlight"><pre><span></span><span class="n">linreg</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">Z_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="n">linreg</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">Z_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>0.9402831425623859
+</pre></div>
+
+
+<p>See how it is doing after feature selection</p>
+<div class="highlight"><pre><span></span><span class="n">linreg</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">Z_train_selected</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="n">linreg</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">Z_train_selected</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>0.8041537657575873
+</pre></div>
+
+
+<h3>Try different models</h3>
+<h4>Linreg:</h4>
+<div class="highlight"><pre><span></span><span class="n">linreg</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">Z_train_selected</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="n">linreg</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">Z_train_selected</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>0.8041537657575873
+</pre></div>
+
+
+<h4>Lasso:</h4>
+<div class="highlight"><pre><span></span><span class="n">lassomodel</span> <span class="o">=</span> <span class="n">Lasso</span><span class="p">()</span>
+<span class="n">lassomodel</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">Z_train_selected</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="n">lassomodel</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">Z_train_selected</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>0.8041537609180501
+</pre></div>
+
+
+<h4>Ridge:</h4>
+<div class="highlight"><pre><span></span><span class="n">ridgemodel</span> <span class="o">=</span> <span class="n">Ridge</span><span class="p">()</span>
+<span class="n">ridgemodel</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">Z_train_selected</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="n">ridgemodel</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">Z_train_selected</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>0.8041534321047469
+</pre></div>
+
+
+<h4>RANSAC:</h4>
+<div class="highlight"><pre><span></span><span class="n">rsmodel</span> <span class="o">=</span> <span class="n">RANSACRegressor</span><span class="p">()</span>
+<span class="n">rsmodel</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">Z_train_selected</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="n">rsmodel</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">Z_train_selected</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>0.7748606219972884
+</pre></div>
+
+
+<h3>Evaluation</h3>
+<p>Try out a few metrics on these models to see how they measure (Do not fit or fit_transform Z_test, only transform).</p>
+<div class="highlight"><pre><span></span><span class="n">Z_test</span> <span class="o">=</span> <span class="n">mapper</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+<span class="n">Z_test_selected</span> <span class="o">=</span> <span class="n">select</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">Z_test</span><span class="p">)</span>
+
+
+<span class="n">linreg_pred</span> <span class="o">=</span> <span class="n">linreg</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">Z_test_selected</span><span class="p">)</span>
+<span class="n">lasso_pred</span> <span class="o">=</span> <span class="n">lassomodel</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">Z_test_selected</span><span class="p">)</span>
+<span class="n">ridge_pred</span> <span class="o">=</span> <span class="n">ridgemodel</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">Z_test_selected</span><span class="p">)</span>
+<span class="n">rs_pred</span> <span class="o">=</span> <span class="n">rsmodel</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">Z_test_selected</span><span class="p">)</span>
+<span class="n">metrics_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span>
+    <span class="p">(</span><span class="s1">&#39;linreg&#39;</span><span class="p">,</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">linreg_pred</span><span class="p">,</span> <span class="n">y_test</span><span class="p">),</span> <span class="n">mean_squared_error</span><span class="p">(</span><span class="n">linreg_pred</span><span class="p">,</span> <span class="n">y_test</span><span class="p">),</span> <span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">linreg_pred</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)),</span>
+    <span class="p">(</span><span class="s1">&#39;lasso&#39;</span><span class="p">,</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">lasso_pred</span><span class="p">,</span> <span class="n">y_test</span><span class="p">),</span> <span class="n">mean_squared_error</span><span class="p">(</span><span class="n">lasso_pred</span><span class="p">,</span> <span class="n">y_test</span><span class="p">),</span> <span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">lasso_pred</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)),</span>
+    <span class="p">(</span><span class="s1">&#39;ridge&#39;</span><span class="p">,</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">ridge_pred</span><span class="p">,</span> <span class="n">y_test</span><span class="p">),</span> <span class="n">mean_squared_error</span><span class="p">(</span><span class="n">ridge_pred</span><span class="p">,</span> <span class="n">y_test</span><span class="p">),</span> <span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">ridge_pred</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)),</span>
+    <span class="p">(</span><span class="s1">&#39;RANSAC&#39;</span><span class="p">,</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">rs_pred</span><span class="p">,</span> <span class="n">y_test</span><span class="p">),</span> <span class="n">mean_squared_error</span><span class="p">(</span><span class="n">rs_pred</span><span class="p">,</span> <span class="n">y_test</span><span class="p">),</span> <span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">rs_pred</span><span class="p">,</span> <span class="n">y_test</span><span class="p">))</span>
+<span class="p">],</span> <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;score&#39;</span><span class="p">,</span> <span class="s1">&#39;r2 score&#39;</span><span class="p">,</span> <span class="s1">&#39;mean squared error&#39;</span><span class="p">,</span> <span class="s1">&#39;mean absolute error&#39;</span><span class="p">])</span>
+<span class="n">metrics_df</span>
+</pre></div>
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>score</th>
+      <th>r2 score</th>
+      <th>mean squared error</th>
+      <th>mean absolute error</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>linreg</td>
+      <td>0.695536</td>
+      <td>1.529074e+09</td>
+      <td>26749.600252</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>lasso</td>
+      <td>0.695534</td>
+      <td>1.529023e+09</td>
+      <td>26748.818246</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>ridge</td>
+      <td>0.695444</td>
+      <td>1.528708e+09</td>
+      <td>26742.650040</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>RANSAC</td>
+      <td>0.628390</td>
+      <td>1.678275e+09</td>
+      <td>27572.785348</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<p>Since linreg, lasso and ridge are showing simmilar scores and errors, any one of the three should work. I will pick Lasso in this case because we are dealing with a lot of features in this dataset and lasso can help minimize unimportant features.</p>
+<h3>Pipeline</h3>
+<p>Make pipeline for new data</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="kn">import</span> <span class="n">make_pipeline</span>
+<span class="n">pipe</span> <span class="o">=</span> <span class="n">make_pipeline</span><span class="p">(</span><span class="n">mapper</span><span class="p">,</span> <span class="n">select</span><span class="p">,</span> <span class="n">lassomodel</span><span class="p">)</span>
+<span class="n">pipe</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="n">pipe</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>0.7651994737908446
+</pre></div>
+
+
+<h3>Conclusion and recommendation</h3>
+<p>Housing prices can be predicted with 76.5% accuracy through this model.</p>
+<ul>
+<li>Agricultural zones,</li>
+<li>industrial zones,</li>
+<li>all public utilities(electricity, gas, water),</li>
+<li>proximity to north-south railroad,</li>
+<li>overall quality,</li>
+<li>imitation stucco on the exterior,</li>
+<li>stone foundation,</li>
+<li>salavge only properties,</li>
+<li>miscellenious features,</li>
+<li>15% down payment contract payment option on sale or</li>
+<li>just contracted homes</li>
+</ul>
+<p>are the factors affecting sale prices in this dataset.</p>
+<div class="highlight"><pre><span></span><span class="n">alt</span><span class="o">.</span><span class="n">renderers</span><span class="o">.</span><span class="n">enable</span><span class="p">(</span><span class="s1">&#39;notebook&#39;</span><span class="p">)</span>
+<span class="n">final_feature_df</span> <span class="o">=</span> <span class="n">select_df</span><span class="p">[</span><span class="n">select_df</span><span class="p">[</span><span class="s1">&#39;bool&#39;</span><span class="p">]]</span>
+<span class="n">final_features</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">final_feature_df</span><span class="o">.</span><span class="n">feature</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span> <span class="o">-</span> <span class="p">{</span><span class="s1">&#39;Garage Yr Blt&#39;</span><span class="p">,</span> <span class="s1">&#39;Mo Sold&#39;</span><span class="p">})</span>
+<span class="n">alt_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">Z_train_selected</span><span class="p">,</span> <span class="n">columns</span> <span class="o">=</span> <span class="n">final_feature_df</span><span class="o">.</span><span class="n">feature</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+<span class="n">alt_df</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">alt_df</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">y_train</span><span class="o">.</span><span class="n">values</span>
+<span class="n">charts</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;purple&#39;</span><span class="p">,</span> <span class="s1">&#39;darkblue&#39;</span><span class="p">,</span> <span class="s1">&#39;skyblue&#39;</span><span class="p">,</span> <span class="s1">&#39;limegreen&#39;</span><span class="p">,</span> <span class="s1">&#39;gold&#39;</span><span class="p">,</span> <span class="s1">&#39;orangered&#39;</span><span class="p">,</span> <span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="s1">&#39;pink&#39;</span><span class="p">]</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="n">sns</span><span class="o">.</span><span class="n">regplot</span><span class="p">(</span><span class="n">alt_df</span><span class="p">[</span><span class="n">final_features</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">alt_df</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">],</span> <span class="n">color</span> <span class="o">=</span> <span class="n">colors</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">scatter_kws</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;alpha&#39;</span><span class="p">:</span><span class="mf">0.3</span><span class="p">})</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Price&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">final_features</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+</pre></div>
+
+
+<p><img alt="png" src="images/ames/output_55_0.png"></p>
+<div class="highlight"><pre><span></span><span class="n">sns</span><span class="o">.</span><span class="n">regplot</span><span class="p">(</span><span class="n">alt_df</span><span class="p">[</span><span class="n">final_features</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span> <span class="n">alt_df</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">],</span> <span class="n">color</span> <span class="o">=</span> <span class="n">colors</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">scatter_kws</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;alpha&#39;</span><span class="p">:</span><span class="mf">0.3</span><span class="p">})</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Price&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">final_features</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
+</pre></div>
+
+
+<p><img alt="png" src="images/ames/output_56_0.png"></p>
+<div class="highlight"><pre><span></span><span class="n">sns</span><span class="o">.</span><span class="n">regplot</span><span class="p">(</span><span class="n">alt_df</span><span class="p">[</span><span class="n">final_features</span><span class="p">[</span><span class="mi">3</span><span class="p">]],</span> <span class="n">alt_df</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">],</span> <span class="n">color</span> <span class="o">=</span> <span class="n">colors</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">scatter_kws</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;alpha&#39;</span><span class="p">:</span><span class="mf">0.3</span><span class="p">})</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Price&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">final_features</span><span class="p">[</span><span class="mi">3</span><span class="p">]);</span>
+</pre></div>
+
+
+<p><img alt="png" src="images/ames/output_57_0.png"></p>
+<div class="highlight"><pre><span></span><span class="n">sns</span><span class="o">.</span><span class="n">regplot</span><span class="p">(</span><span class="n">alt_df</span><span class="p">[</span><span class="n">final_features</span><span class="p">[</span><span class="mi">4</span><span class="p">]],</span> <span class="n">alt_df</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">],</span> <span class="n">color</span> <span class="o">=</span> <span class="n">colors</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">scatter_kws</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;alpha&#39;</span><span class="p">:</span><span class="mf">0.3</span><span class="p">})</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Price&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">final_features</span><span class="p">[</span><span class="mi">4</span><span class="p">]);</span>
+</pre></div>
+
+
+<p><img alt="png" src="images/ames/output_58_0.png"></p>
+<div class="highlight"><pre><span></span><span class="n">sns</span><span class="o">.</span><span class="n">regplot</span><span class="p">(</span><span class="n">alt_df</span><span class="p">[</span><span class="n">final_features</span><span class="p">[</span><span class="mi">5</span><span class="p">]],</span> <span class="n">alt_df</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">],</span> <span class="n">color</span> <span class="o">=</span> <span class="n">colors</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">scatter_kws</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;alpha&#39;</span><span class="p">:</span><span class="mf">0.3</span><span class="p">})</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Price&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">final_features</span><span class="p">[</span><span class="mi">5</span><span class="p">]);</span>
+</pre></div>
+
+
+<p><img alt="png" src="images/ames/output_59_0.png"></p>
+<div class="highlight"><pre><span></span><span class="n">sns</span><span class="o">.</span><span class="n">regplot</span><span class="p">(</span><span class="n">alt_df</span><span class="p">[</span><span class="n">final_features</span><span class="p">[</span><span class="mi">6</span><span class="p">]],</span> <span class="n">alt_df</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">],</span> <span class="n">color</span> <span class="o">=</span> <span class="n">colors</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span> <span class="n">scatter_kws</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;alpha&#39;</span><span class="p">:</span><span class="mf">0.3</span><span class="p">})</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Price&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">final_features</span><span class="p">[</span><span class="mi">6</span><span class="p">]);</span>
+</pre></div>
+
+
+<p><img alt="png" src="images/ames/output_60_0.png"></p>
+ </div>
+</div>
+ </div>
+</body>
+</html>
