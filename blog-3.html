@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <title>Intro to Naural Language Processing with spaCy</title>
+ <!-- Latest compiled and minified CSS -->
+ <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+ <div class="container">
+  <h1><a href="https://nawarani.github.io/blog">blog</a></h1>
+ </div>
+</head>
+<body>
+ <div class="container">
+<div class="row">
+ <div class="col-md-8">
+  <h3>Intro to Naural Language Processing with spaCy</h3>
+  <label>2019-10-07</label>
+  <h2>spaCy</h2>
+<p>spaCy is a natural language processing library for python. Some of its features are:
+- non-destructive tokenization,
+- named entity recognition,
+- pre-trained models
+- support for 52+ individual langueages.</p>
+<p>Since coding is best explained through examples, in this blog, we will use spacy to work through a book from <a href="http://www.gutenberg.org/ebooks/1661">Project Gutenberg</a>.</p>
+<h3>Finding proper nouns and custom patterns in The Adventures of Sherlock Holmes</h3>
+<h4>Install spacy and language model</h4>
+<div class="highlight"><pre><span></span><span class="err">!</span> <span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">U</span> <span class="n">spacy</span>
+<span class="err">!</span> <span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">spacy</span> <span class="n">download</span> <span class="n">en_core_web_sm</span>
+</pre></div>
+
+
+<h4>Imports</h4>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">spacy</span>
+</pre></div>
+
+
+<h4>Load model as the nlp onject</h4>
+<p>spacy language and models can be downloaded as python packages. Some of the models and langugae packages can be found <a href="https://spacy.io/usage/models">here</a>. For this example, we will be using the small english languge web model 'en_core_web_sm'.</p>
+<div class="highlight"><pre><span></span><span class="n">nlp</span> <span class="o">=</span> <span class="n">spacy</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;en_core_web_sm&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<h4>Load text</h4>
+<div class="highlight"><pre><span></span><span class="n">text</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;data/1661-0.txt&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+</pre></div>
+
+
+<p>The length of the text is more than the default max length, so we reassign the max length of text to reflect that.</p>
+<div class="highlight"><pre><span></span><span class="n">nlp</span><span class="o">.</span><span class="n">max_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+</pre></div>
+
+
+<h4>Process text</h4>
+<div class="highlight"><pre><span></span><span class="n">doc</span> <span class="o">=</span> <span class="n">nlp</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+</pre></div>
+
+
+<h4>Find sentences in text</h4>
+<div class="highlight"><pre><span></span><span class="n">sentences</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">doc</span><span class="o">.</span><span class="n">sents</span><span class="p">)</span>
+</pre></div>
+
+
+<p>we can access the sentences through a loop.</p>
+<div class="highlight"><pre><span></span><span class="n">long_sentences</span> <span class="o">=</span> <span class="p">[</span><span class="n">sentence</span> <span class="k">for</span> <span class="n">sentence</span> <span class="ow">in</span> <span class="n">sentences</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sentence</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">]</span>
+<span class="n">long_sentences</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>A shock of orange hair, a
+pale face disfigured by a horrible scar, which, by its contraction, has
+turned up the outer edge of his upper lip, a bulldog chin, and a pair
+of very penetrating dark eyes, which present a singular contrast to the
+colour of his hair, all mark him out from amid the common crowd of
+mendicants and so, too, does his wit, for he is ever ready with a reply
+to any piece of chaff which may be thrown at him by the passers-by.
+</pre></div>
+
+
+<h4>Tokenization, Lemmatization and labeling of named entities</h4>
+<p>When we call the nlp object on our text, it calls for a pipeline object that tokenizes, tags, parses and recognizes entities. We can access the tokens and entities through a loop, call for the lemmas of each word through .lemma_ and find labels for the entities through .label_</p>
+<p><img alt="" src="https://d33wubrfki0l68.cloudfront.net/16b2ccafeefd6d547171afa23f9ac62f159e353d/48b91/pipeline-7a14d4edd18f3edfee8f34393bff2992.svg"></p>
+<div class="highlight"><pre><span></span><span class="n">token_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">token</span> <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">doc</span><span class="p">]</span>
+<span class="n">token_list</span><span class="p">[</span><span class="mi">1000</span><span class="p">:</span><span class="mi">1010</span><span class="p">]</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>[problem, ., I, rang, the, bell, , and, was, shown]
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="n">lemma_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">token</span><span class="o">.</span><span class="n">lemma_</span> <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">doc</span><span class="p">]</span>
+<span class="n">lemma_list</span><span class="p">[</span><span class="mi">1000</span><span class="p">:</span><span class="mi">1010</span><span class="p">]</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>[&#39;problem&#39;, &#39;.&#39;, &#39;-PRON-&#39;, &#39;ring&#39;, &#39;the&#39;, &#39;bell&#39;, &#39;\n&#39;, &#39;and&#39;, &#39;be&#39;, &#39;show&#39;]
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="n">entity_list</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">label_list</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">ent</span> <span class="ow">in</span> <span class="n">doc</span><span class="o">.</span><span class="n">ents</span><span class="p">:</span>
+    <span class="n">entity_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ent</span><span class="p">)</span>
+    <span class="n">label_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ent</span><span class="o">.</span><span class="n">label_</span><span class="p">)</span>
+<span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">entity_list</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="n">label_list</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="n">Gutenberg</span> <span class="o">:</span> <span class="n">PERSON</span>
+<span class="n">The</span> <span class="n">Adventures</span> <span class="n">of</span> <span class="n">Sherlock</span> <span class="n">Holmes</span> <span class="o">:</span> <span class="n">WORK_OF_ART</span>
+<span class="n">Arthur</span> <span class="n">Conan</span> <span class="n">Doyle</span>
+
+ <span class="o">:</span> <span class="n">ORG</span>
+<span class="n">the</span> <span class="n">Project</span> <span class="n">Gutenberg</span> <span class="n">License</span> <span class="o">:</span> <span class="n">ORG</span>
+<span class="n">eBook</span> <span class="o">:</span> <span class="n">LAW</span>
+<span class="n">The</span> <span class="n">Adventures</span> <span class="n">of</span> <span class="n">Sherlock</span> <span class="n">Holmes</span>
+
+ <span class="o">:</span> <span class="n">WORK_OF_ART</span>
+<span class="n">Arthur</span> <span class="n">Conan</span> <span class="n">Doyle</span>
+
+<span class="n">Release</span> <span class="n">Date</span> <span class="o">:</span> <span class="n">PERSON</span>
+<span class="n">November</span> <span class="mi">29</span><span class="o">,</span> <span class="mi">2002</span> <span class="o">:</span> <span class="n">DATE</span>
+<span class="n">May</span> <span class="mi">20</span><span class="o">,</span> <span class="mi">2019</span> <span class="o">:</span> <span class="n">DATE</span>
+<span class="n">English</span> <span class="o">:</span> <span class="n">LANGUAGE</span>
+</pre></div>
+
+
+<p>As we can see, it's not perfect. Often times, for bigger text documents like this it is better to use larger models. 'en_core_web_sm' is a smaller model, as denoted by the 'sm' suffix.</p>
+<h4>Find all the proper nouns in the text</h4>
+<div class="highlight"><pre><span></span><span class="n">proper_noun_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">token</span><span class="o">.</span><span class="n">text</span> <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">doc</span> <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">pos_</span> <span class="o">==</span> <span class="s1">&#39;PROPN&#39;</span><span class="p">]</span>
+<span class="k">print</span><span class="p">(</span><span class="s1">&#39;Number of proper nouns in text:&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">proper_noun_list</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s1">&#39;Example:&#39;</span><span class="p">,</span> <span class="n">proper_noun_list</span><span class="p">[</span><span class="mi">1537</span><span class="p">:</span><span class="mi">1550</span><span class="p">])</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>Number of proper nouns in text: 5070
+Example: [&#39;Miss&#39;, &#39;Turner&#39;, &#39;James&#39;, &#39;Mr.&#39;, &#39;Holmes&#39;, &#39;Miss&#39;, &#39;Turner&#39;, &#39;God&#39;, &#39;Holmes&#39;, &#39;Lestrade&#39;, &#39;James&#39;, &#39;McCarthy&#39;, &#39;Holmes&#39;]
+</pre></div>
+
+
+<p>The proper nouns can also be accessed through loops.</p>
+<h4>Stop words</h4>
+<p>Stop words and punctuations can be targeted through is_stop and is_punct.</p>
+<div class="highlight"><pre><span></span><span class="n">clean_doc</span> <span class="o">=</span> <span class="p">[</span><span class="n">token</span><span class="o">.</span><span class="n">text</span> <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">doc</span> <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">token</span><span class="o">.</span><span class="n">is_stop</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">token</span><span class="o">.</span><span class="n">is_punct</span><span class="p">)]</span>
+<span class="n">clean_doc</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>[&#39;\n&#39;,
+ &#39;Project&#39;,
+ &#39;Gutenberg&#39;,
+ &#39;Adventures&#39;,
+ &#39;Sherlock&#39;,
+ &#39;Holmes&#39;,
+ &#39;Arthur&#39;,
+ &#39;Conan&#39;,
+ &#39;Doyle&#39;,
+ &#39;\n\n&#39;]
+</pre></div>
+
+
+<p>We can use our own stop_words or make a default stop_word not a stop_word with in the following <a href="https://stackoverflow.com/questions/41170726/add-remove-stop-words-with-spacy">process</a>.</p>
+<div class="highlight"><pre><span></span><span class="n">nlp</span><span class="o">.</span><span class="n">vocab</span><span class="p">[</span><span class="s2">&quot;the&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">is_stop</span> <span class="o">=</span> <span class="bp">False</span>
+<span class="n">nlp</span><span class="o">.</span><span class="n">vocab</span><span class="p">[</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">is_stop</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="n">clean_text</span> <span class="o">=</span> <span class="p">[</span><span class="n">token</span><span class="o">.</span><span class="n">text</span> <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">doc</span> <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">token</span><span class="o">.</span><span class="n">is_stop</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">token</span><span class="o">.</span><span class="n">is_punct</span><span class="p">)]</span>
+<span class="n">clean_text</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>[&#39;Project&#39;,
+ &#39;Gutenberg&#39;,
+ &#39;Adventures&#39;,
+ &#39;Sherlock&#39;,
+ &#39;Holmes&#39;,
+ &#39;Arthur&#39;,
+ &#39;Conan&#39;,
+ &#39;Doyle&#39;,
+ &#39;\n\n&#39;,
+ &#39;eBook&#39;]
+</pre></div>
+
+
+<h4>dependencies and visualization through displacy</h4>
+<div class="highlight"><pre><span></span><span class="c1"># Print the text and the predicted part-of-speech tag</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+<span class="k">print</span><span class="p">(</span><span class="s1">&#39;Sentence:&#39;</span><span class="p">,</span><span class="n">sentences</span><span class="p">[</span><span class="mi">637</span><span class="p">])</span>
+<span class="n">sent_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="s1">&#39;pos&#39;</span><span class="p">,</span> <span class="s1">&#39;dep&#39;</span><span class="p">,</span> <span class="s1">&#39;related word&#39;</span><span class="p">])</span>
+<span class="n">text_list</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">pos_list</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">dep_list</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">rel_list</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">sentences</span><span class="p">[</span><span class="mi">637</span><span class="p">]:</span>
+    <span class="n">text_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">word</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+    <span class="n">pos_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">word</span><span class="o">.</span><span class="n">pos_</span><span class="p">)</span>
+    <span class="n">dep_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">word</span><span class="o">.</span><span class="n">dep_</span><span class="p">)</span>
+    <span class="n">rel_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">word</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+<span class="n">sent_df</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">text_list</span>
+<span class="n">sent_df</span><span class="p">[</span><span class="s1">&#39;pos&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pos_list</span>
+<span class="n">sent_df</span><span class="p">[</span><span class="s1">&#39;dep&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dep_list</span>
+<span class="n">sent_df</span><span class="p">[</span><span class="s1">&#39;related word&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rel_list</span>
+<span class="n">sent_df</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="n">Sentence</span><span class="o">:</span> <span class="n">I</span> <span class="n">wish</span> <span class="n">she</span> <span class="n">had</span> <span class="n">been</span> <span class="n">of</span> <span class="n">my</span> <span class="n">own</span> <span class="n">station</span><span class="o">!</span>
+</pre></div>
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>text</th>
+      <th>pos</th>
+      <th>dep</th>
+      <th>related word</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>I</td>
+      <td>PRON</td>
+      <td>nsubj</td>
+      <td>wish</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>wish</td>
+      <td>VERB</td>
+      <td>ROOT</td>
+      <td>wish</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>she</td>
+      <td>PRON</td>
+      <td>nsubj</td>
+      <td>been</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>had</td>
+      <td>AUX</td>
+      <td>aux</td>
+      <td>been</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>been</td>
+      <td>AUX</td>
+      <td>ccomp</td>
+      <td>wish</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>of</td>
+      <td>ADP</td>
+      <td>prep</td>
+      <td>been</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>my</td>
+      <td>PRON</td>
+      <td>poss</td>
+      <td>station</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>own</td>
+      <td>ADJ</td>
+      <td>amod</td>
+      <td>station</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>station</td>
+      <td>NOUN</td>
+      <td>pobj</td>
+      <td>of</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>!</td>
+      <td>PUNCT</td>
+      <td>punct</td>
+      <td>wish</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>\n</td>
+      <td>SPACE</td>
+      <td></td>
+      <td>!</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">spacy</span> <span class="kn">import</span> <span class="n">displacy</span>
+<span class="n">displacy</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">sentences</span><span class="p">[</span><span class="mi">6751</span><span class="p">],</span> <span class="n">style</span> <span class="o">=</span> <span class="s1">&#39;dep&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<p><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:lang="en" id="c1d4b15930c0417caaf7354a0c9d9d82-0" class="displacy" width="3900" height="574.5" direction="ltr" style="max-width: none; height: 574.5px; color: #000000; background: #ffffff; font-family: Arial; direction: ltr">
+<text class="displacy-token" fill="currentColor" text-anchor="middle" y="484.5">
+    <tspan class="displacy-word" fill="currentColor" x="50">“</tspan>
+    <tspan class="displacy-tag" dy="2em" fill="currentColor" x="50">PUNCT</tspan>
+</text></p>
+<p><text class="displacy-token" fill="currentColor" text-anchor="middle" y="484.5">
+    <tspan class="displacy-word" fill="currentColor" x="225">‘</tspan>
+    <tspan class="displacy-tag" dy="2em" fill="currentColor" x="225">PUNCT</tspan>
+</text></p>
+<p><text class="displacy-token" fill="currentColor" text-anchor="middle" y="484.5">
+    <tspan class="displacy-word" fill="currentColor" x="400">Jephro,’</tspan>
+    <tspan class="displacy-tag" dy="2em" fill="currentColor" x="400">PROPN</tspan>
+</text></p>
+<p><text class="displacy-token" fill="currentColor" text-anchor="middle" y="484.5">
+    <tspan class="displacy-word" fill="currentColor" x="575">said</tspan>
+    <tspan class="displacy-tag" dy="2em" fill="currentColor" x="575">VERB</tspan>
+</text></p>
+<p><text class="displacy-token" fill="currentColor" text-anchor="middle" y="484.5">
+    <tspan class="displacy-word" fill="currentColor" x="750">she, ‘</tspan>
+    <tspan class="displacy-tag" dy="2em" fill="currentColor" x="750">PRON</tspan>
+</text></p>
+<p><text class="displacy-token" fill="currentColor" text-anchor="middle" y="484.5">
+    <tspan class="displacy-word" fill="currentColor" x="925">there</tspan>
+    <tspan class="displacy-tag" dy="2em" fill="currentColor" x="925">PRON</tspan>
+</text></p>
+<p><text class="displacy-token" fill="currentColor" text-anchor="middle" y="484.5">
+    <tspan class="displacy-word" fill="currentColor" x="1100">is</tspan>
+    <tspan class="displacy-tag" dy="2em" fill="currentColor" x="1100">AUX</tspan>
+</text></p>
+<p><text class="displacy-token" fill="currentColor" text-anchor="middle" y="484.5">
+    <tspan class="displacy-word" fill="currentColor" x="1275">an</tspan>
+    <tspan class="displacy-tag" dy="2em" fill="currentColor" x="1275">DET</tspan>
+</text></p>
+<p><text class="displacy-token" fill="currentColor" text-anchor="middle" y="484.5">
+    <tspan class="displacy-word" fill="currentColor" x="1450">impertinent</tspan>
+    <tspan class="displacy-tag" dy="2em" fill="currentColor" x="1450">ADJ</tspan>
+</text></p>
+<p><text class="displacy-token" fill="currentColor" text-anchor="middle" y="484.5">
+    <tspan class="displacy-word" fill="currentColor" x="1625">fellow</tspan>
+    <tspan class="displacy-tag" dy="2em" fill="currentColor" x="1625">NOUN</tspan>
+</text></p>
+<p><text class="displacy-token" fill="currentColor" text-anchor="middle" y="484.5">
+    <tspan class="displacy-word" fill="currentColor" x="1800">upon</tspan>
+    <tspan class="displacy-tag" dy="2em" fill="currentColor" x="1800">SCONJ</tspan>
+</text></p>
+<p><text class="displacy-token" fill="currentColor" text-anchor="middle" y="484.5">
+    <tspan class="displacy-word" fill="currentColor" x="1975">the</tspan>
+    <tspan class="displacy-tag" dy="2em" fill="currentColor" x="1975">DET</tspan>
+</text></p>
+<p><text class="displacy-token" fill="currentColor" text-anchor="middle" y="484.5">
+    <tspan class="displacy-word" fill="currentColor" x="2150">road</tspan>
+    <tspan class="displacy-tag" dy="2em" fill="currentColor" x="2150">NOUN</tspan>
+</text></p>
+<p><text class="displacy-token" fill="currentColor" text-anchor="middle" y="484.5">
+    <tspan class="displacy-word" fill="currentColor" x="2325">
+</tspan>
+    <tspan class="displacy-tag" dy="2em" fill="currentColor" x="2325">SPACE</tspan>
+</text></p>
+<p><text class="displacy-token" fill="currentColor" text-anchor="middle" y="484.5">
+    <tspan class="displacy-word" fill="currentColor" x="2500">there</tspan>
+    <tspan class="displacy-tag" dy="2em" fill="currentColor" x="2500">ADV</tspan>
+</text></p>
+<p><text class="displacy-token" fill="currentColor" text-anchor="middle" y="484.5">
+    <tspan class="displacy-word" fill="currentColor" x="2675">who</tspan>
+    <tspan class="displacy-tag" dy="2em" fill="currentColor" x="2675">PRON</tspan>
+</text></p>
+<p><text class="displacy-token" fill="currentColor" text-anchor="middle" y="484.5">
+    <tspan class="displacy-word" fill="currentColor" x="2850">stares</tspan>
+    <tspan class="displacy-tag" dy="2em" fill="currentColor" x="2850">VERB</tspan>
+</text></p>
+<p><text class="displacy-token" fill="currentColor" text-anchor="middle" y="484.5">
+    <tspan class="displacy-word" fill="currentColor" x="3025">up</tspan>
+    <tspan class="displacy-tag" dy="2em" fill="currentColor" x="3025">ADP</tspan>
+</text></p>
+<p><text class="displacy-token" fill="currentColor" text-anchor="middle" y="484.5">
+    <tspan class="displacy-word" fill="currentColor" x="3200">at</tspan>
+    <tspan class="displacy-tag" dy="2em" fill="currentColor" x="3200">ADP</tspan>
+</text></p>
+<p><text class="displacy-token" fill="currentColor" text-anchor="middle" y="484.5">
+    <tspan class="displacy-word" fill="currentColor" x="3375">Miss</tspan>
+    <tspan class="displacy-tag" dy="2em" fill="currentColor" x="3375">PROPN</tspan>
+</text></p>
+<p><text class="displacy-token" fill="currentColor" text-anchor="middle" y="484.5">
+    <tspan class="displacy-word" fill="currentColor" x="3550">Hunter.’</tspan>
+    <tspan class="displacy-tag" dy="2em" fill="currentColor" x="3550">PROPN</tspan>
+</text></p>
+<p><text class="displacy-token" fill="currentColor" text-anchor="middle" y="484.5">
+    <tspan class="displacy-word" fill="currentColor" x="3725"></p>
+<p></tspan>
+    <tspan class="displacy-tag" dy="2em" fill="currentColor" x="3725">SPACE</tspan>
+</text></p>
+<p><g class="displacy-arrow">
+    <path class="displacy-arc" id="arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-0" stroke-width="2px" d="M70,439.5 C70,264.5 385.0,264.5 385.0,439.5" fill="none" stroke="currentColor"/>
+    <text dy="1.25em" style="font-size: 0.8em; letter-spacing: 1px">
+        <textPath xlink:href="#arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-0" class="displacy-label" startOffset="50%" side="left" fill="currentColor" text-anchor="middle">punct</textPath>
+    </text>
+    <path class="displacy-arrowhead" d="M70,441.5 L62,429.5 78,429.5" fill="currentColor"/>
+</g></p>
+<p><g class="displacy-arrow">
+    <path class="displacy-arc" id="arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-1" stroke-width="2px" d="M245,439.5 C245,352.0 380.0,352.0 380.0,439.5" fill="none" stroke="currentColor"/>
+    <text dy="1.25em" style="font-size: 0.8em; letter-spacing: 1px">
+        <textPath xlink:href="#arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-1" class="displacy-label" startOffset="50%" side="left" fill="currentColor" text-anchor="middle">punct</textPath>
+    </text>
+    <path class="displacy-arrowhead" d="M245,441.5 L237,429.5 253,429.5" fill="currentColor"/>
+</g></p>
+<p><g class="displacy-arrow">
+    <path class="displacy-arc" id="arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-2" stroke-width="2px" d="M420,439.5 C420,352.0 555.0,352.0 555.0,439.5" fill="none" stroke="currentColor"/>
+    <text dy="1.25em" style="font-size: 0.8em; letter-spacing: 1px">
+        <textPath xlink:href="#arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-2" class="displacy-label" startOffset="50%" side="left" fill="currentColor" text-anchor="middle">dep</textPath>
+    </text>
+    <path class="displacy-arrowhead" d="M555.0,441.5 L563.0,429.5 547.0,429.5" fill="currentColor"/>
+</g></p>
+<p><g class="displacy-arrow">
+    <path class="displacy-arc" id="arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-3" stroke-width="2px" d="M595,439.5 C595,352.0 730.0,352.0 730.0,439.5" fill="none" stroke="currentColor"/>
+    <text dy="1.25em" style="font-size: 0.8em; letter-spacing: 1px">
+        <textPath xlink:href="#arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-3" class="displacy-label" startOffset="50%" side="left" fill="currentColor" text-anchor="middle">nsubj</textPath>
+    </text>
+    <path class="displacy-arrowhead" d="M730.0,441.5 L738.0,429.5 722.0,429.5" fill="currentColor"/>
+</g></p>
+<p><g class="displacy-arrow">
+    <path class="displacy-arc" id="arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-4" stroke-width="2px" d="M945,439.5 C945,352.0 1080.0,352.0 1080.0,439.5" fill="none" stroke="currentColor"/>
+    <text dy="1.25em" style="font-size: 0.8em; letter-spacing: 1px">
+        <textPath xlink:href="#arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-4" class="displacy-label" startOffset="50%" side="left" fill="currentColor" text-anchor="middle">expl</textPath>
+    </text>
+    <path class="displacy-arrowhead" d="M945,441.5 L937,429.5 953,429.5" fill="currentColor"/>
+</g></p>
+<p><g class="displacy-arrow">
+    <path class="displacy-arc" id="arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-5" stroke-width="2px" d="M595,439.5 C595,177.0 1090.0,177.0 1090.0,439.5" fill="none" stroke="currentColor"/>
+    <text dy="1.25em" style="font-size: 0.8em; letter-spacing: 1px">
+        <textPath xlink:href="#arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-5" class="displacy-label" startOffset="50%" side="left" fill="currentColor" text-anchor="middle">ccomp</textPath>
+    </text>
+    <path class="displacy-arrowhead" d="M1090.0,441.5 L1098.0,429.5 1082.0,429.5" fill="currentColor"/>
+</g></p>
+<p><g class="displacy-arrow">
+    <path class="displacy-arc" id="arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-6" stroke-width="2px" d="M1295,439.5 C1295,264.5 1610.0,264.5 1610.0,439.5" fill="none" stroke="currentColor"/>
+    <text dy="1.25em" style="font-size: 0.8em; letter-spacing: 1px">
+        <textPath xlink:href="#arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-6" class="displacy-label" startOffset="50%" side="left" fill="currentColor" text-anchor="middle">det</textPath>
+    </text>
+    <path class="displacy-arrowhead" d="M1295,441.5 L1287,429.5 1303,429.5" fill="currentColor"/>
+</g></p>
+<p><g class="displacy-arrow">
+    <path class="displacy-arc" id="arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-7" stroke-width="2px" d="M1470,439.5 C1470,352.0 1605.0,352.0 1605.0,439.5" fill="none" stroke="currentColor"/>
+    <text dy="1.25em" style="font-size: 0.8em; letter-spacing: 1px">
+        <textPath xlink:href="#arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-7" class="displacy-label" startOffset="50%" side="left" fill="currentColor" text-anchor="middle">amod</textPath>
+    </text>
+    <path class="displacy-arrowhead" d="M1470,441.5 L1462,429.5 1478,429.5" fill="currentColor"/>
+</g></p>
+<p><g class="displacy-arrow">
+    <path class="displacy-arc" id="arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-8" stroke-width="2px" d="M1120,439.5 C1120,177.0 1615.0,177.0 1615.0,439.5" fill="none" stroke="currentColor"/>
+    <text dy="1.25em" style="font-size: 0.8em; letter-spacing: 1px">
+        <textPath xlink:href="#arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-8" class="displacy-label" startOffset="50%" side="left" fill="currentColor" text-anchor="middle">attr</textPath>
+    </text>
+    <path class="displacy-arrowhead" d="M1615.0,441.5 L1623.0,429.5 1607.0,429.5" fill="currentColor"/>
+</g></p>
+<p><g class="displacy-arrow">
+    <path class="displacy-arc" id="arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-9" stroke-width="2px" d="M1645,439.5 C1645,352.0 1780.0,352.0 1780.0,439.5" fill="none" stroke="currentColor"/>
+    <text dy="1.25em" style="font-size: 0.8em; letter-spacing: 1px">
+        <textPath xlink:href="#arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-9" class="displacy-label" startOffset="50%" side="left" fill="currentColor" text-anchor="middle">prep</textPath>
+    </text>
+    <path class="displacy-arrowhead" d="M1780.0,441.5 L1788.0,429.5 1772.0,429.5" fill="currentColor"/>
+</g></p>
+<p><g class="displacy-arrow">
+    <path class="displacy-arc" id="arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-10" stroke-width="2px" d="M1995,439.5 C1995,352.0 2130.0,352.0 2130.0,439.5" fill="none" stroke="currentColor"/>
+    <text dy="1.25em" style="font-size: 0.8em; letter-spacing: 1px">
+        <textPath xlink:href="#arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-10" class="displacy-label" startOffset="50%" side="left" fill="currentColor" text-anchor="middle">det</textPath>
+    </text>
+    <path class="displacy-arrowhead" d="M1995,441.5 L1987,429.5 2003,429.5" fill="currentColor"/>
+</g></p>
+<p><g class="displacy-arrow">
+    <path class="displacy-arc" id="arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-11" stroke-width="2px" d="M1820,439.5 C1820,264.5 2135.0,264.5 2135.0,439.5" fill="none" stroke="currentColor"/>
+    <text dy="1.25em" style="font-size: 0.8em; letter-spacing: 1px">
+        <textPath xlink:href="#arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-11" class="displacy-label" startOffset="50%" side="left" fill="currentColor" text-anchor="middle">pobj</textPath>
+    </text>
+    <path class="displacy-arrowhead" d="M2135.0,441.5 L2143.0,429.5 2127.0,429.5" fill="currentColor"/>
+</g></p>
+<p><g class="displacy-arrow">
+    <path class="displacy-arc" id="arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-12" stroke-width="2px" d="M2170,439.5 C2170,352.0 2305.0,352.0 2305.0,439.5" fill="none" stroke="currentColor"/>
+    <text dy="1.25em" style="font-size: 0.8em; letter-spacing: 1px">
+        <textPath xlink:href="#arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-12" class="displacy-label" startOffset="50%" side="left" fill="currentColor" text-anchor="middle"></textPath>
+    </text>
+    <path class="displacy-arrowhead" d="M2305.0,441.5 L2313.0,429.5 2297.0,429.5" fill="currentColor"/>
+</g></p>
+<p><g class="displacy-arrow">
+    <path class="displacy-arc" id="arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-13" stroke-width="2px" d="M2170,439.5 C2170,264.5 2485.0,264.5 2485.0,439.5" fill="none" stroke="currentColor"/>
+    <text dy="1.25em" style="font-size: 0.8em; letter-spacing: 1px">
+        <textPath xlink:href="#arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-13" class="displacy-label" startOffset="50%" side="left" fill="currentColor" text-anchor="middle">advmod</textPath>
+    </text>
+    <path class="displacy-arrowhead" d="M2485.0,441.5 L2493.0,429.5 2477.0,429.5" fill="currentColor"/>
+</g></p>
+<p><g class="displacy-arrow">
+    <path class="displacy-arc" id="arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-14" stroke-width="2px" d="M2695,439.5 C2695,352.0 2830.0,352.0 2830.0,439.5" fill="none" stroke="currentColor"/>
+    <text dy="1.25em" style="font-size: 0.8em; letter-spacing: 1px">
+        <textPath xlink:href="#arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-14" class="displacy-label" startOffset="50%" side="left" fill="currentColor" text-anchor="middle">nsubj</textPath>
+    </text>
+    <path class="displacy-arrowhead" d="M2695,441.5 L2687,429.5 2703,429.5" fill="currentColor"/>
+</g></p>
+<p><g class="displacy-arrow">
+    <path class="displacy-arc" id="arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-15" stroke-width="2px" d="M2170,439.5 C2170,89.5 2845.0,89.5 2845.0,439.5" fill="none" stroke="currentColor"/>
+    <text dy="1.25em" style="font-size: 0.8em; letter-spacing: 1px">
+        <textPath xlink:href="#arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-15" class="displacy-label" startOffset="50%" side="left" fill="currentColor" text-anchor="middle">relcl</textPath>
+    </text>
+    <path class="displacy-arrowhead" d="M2845.0,441.5 L2853.0,429.5 2837.0,429.5" fill="currentColor"/>
+</g></p>
+<p><g class="displacy-arrow">
+    <path class="displacy-arc" id="arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-16" stroke-width="2px" d="M2870,439.5 C2870,352.0 3005.0,352.0 3005.0,439.5" fill="none" stroke="currentColor"/>
+    <text dy="1.25em" style="font-size: 0.8em; letter-spacing: 1px">
+        <textPath xlink:href="#arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-16" class="displacy-label" startOffset="50%" side="left" fill="currentColor" text-anchor="middle">prt</textPath>
+    </text>
+    <path class="displacy-arrowhead" d="M3005.0,441.5 L3013.0,429.5 2997.0,429.5" fill="currentColor"/>
+</g></p>
+<p><g class="displacy-arrow">
+    <path class="displacy-arc" id="arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-17" stroke-width="2px" d="M2870,439.5 C2870,264.5 3185.0,264.5 3185.0,439.5" fill="none" stroke="currentColor"/>
+    <text dy="1.25em" style="font-size: 0.8em; letter-spacing: 1px">
+        <textPath xlink:href="#arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-17" class="displacy-label" startOffset="50%" side="left" fill="currentColor" text-anchor="middle">prep</textPath>
+    </text>
+    <path class="displacy-arrowhead" d="M3185.0,441.5 L3193.0,429.5 3177.0,429.5" fill="currentColor"/>
+</g></p>
+<p><g class="displacy-arrow">
+    <path class="displacy-arc" id="arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-18" stroke-width="2px" d="M3395,439.5 C3395,352.0 3530.0,352.0 3530.0,439.5" fill="none" stroke="currentColor"/>
+    <text dy="1.25em" style="font-size: 0.8em; letter-spacing: 1px">
+        <textPath xlink:href="#arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-18" class="displacy-label" startOffset="50%" side="left" fill="currentColor" text-anchor="middle">compound</textPath>
+    </text>
+    <path class="displacy-arrowhead" d="M3395,441.5 L3387,429.5 3403,429.5" fill="currentColor"/>
+</g></p>
+<p><g class="displacy-arrow">
+    <path class="displacy-arc" id="arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-19" stroke-width="2px" d="M420,439.5 C420,2.0 3550.0,2.0 3550.0,439.5" fill="none" stroke="currentColor"/>
+    <text dy="1.25em" style="font-size: 0.8em; letter-spacing: 1px">
+        <textPath xlink:href="#arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-19" class="displacy-label" startOffset="50%" side="left" fill="currentColor" text-anchor="middle">punct</textPath>
+    </text>
+    <path class="displacy-arrowhead" d="M3550.0,441.5 L3558.0,429.5 3542.0,429.5" fill="currentColor"/>
+</g></p>
+<p><g class="displacy-arrow">
+    <path class="displacy-arc" id="arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-20" stroke-width="2px" d="M3570,439.5 C3570,352.0 3705.0,352.0 3705.0,439.5" fill="none" stroke="currentColor"/>
+    <text dy="1.25em" style="font-size: 0.8em; letter-spacing: 1px">
+        <textPath xlink:href="#arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-20" class="displacy-label" startOffset="50%" side="left" fill="currentColor" text-anchor="middle"></textPath>
+    </text>
+    <path class="displacy-arrowhead" d="M3705.0,441.5 L3713.0,429.5 3697.0,429.5" fill="currentColor"/>
+</g>
+</svg></p>
+<p>While the code block mentioned above is enough to render displacy in jupyter notebook, we need to use displacy.serve for other cases.</p>
+<h4>Matcher</h4>
+<p>So if we wanted to extract every word group that consisted of a noun following an adjective, how would we do that?</p>
+<p>We can use Rule based matching to accomplish this.</p>
+<div class="highlight"><pre><span></span><span class="n">sentences</span><span class="p">[</span><span class="mi">6751</span><span class="p">]</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>“‘Jephro,’ said she, ‘there is an impertinent fellow upon the road
+there who stares up at Miss Hunter.’
+</pre></div>
+
+
+<p>Import matcher.</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">spacy.matcher</span> <span class="kn">import</span> <span class="n">Matcher</span>
+</pre></div>
+
+
+<p>Instantiate the matcher with shared vocab of the doc.</p>
+<div class="highlight"><pre><span></span><span class="n">matcher</span> <span class="o">=</span> <span class="n">Matcher</span><span class="p">(</span><span class="n">nlp</span><span class="o">.</span><span class="n">vocab</span><span class="p">)</span>
+</pre></div>
+
+
+<p>Create a custom pattern and add it to the matcher.</p>
+<div class="highlight"><pre><span></span><span class="n">pattern</span> <span class="o">=</span> <span class="p">[{</span><span class="s1">&#39;POS&#39;</span><span class="p">:</span> <span class="s1">&#39;ADJ&#39;</span><span class="p">},</span>
+           <span class="p">{</span><span class="s1">&#39;POS&#39;</span><span class="p">:</span> <span class="s1">&#39;NOUN&#39;</span><span class="p">,</span> <span class="s1">&#39;OP&#39;</span><span class="p">:</span> <span class="s1">&#39;+&#39;</span><span class="p">}]</span>
+<span class="n">matcher</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;CUSTOM_PATTERN&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="n">pattern</span><span class="p">)</span>
+</pre></div>
+
+
+<p>note: "OP" can have one of four values:
+- '!' for 0 times
+- '?' for 0 or 1 time
+- '+' for 1 or more times
+- '*' for 0 or more times</p>
+<p>We can add pattern to the matcher as well thorugh matcher.add()</p>
+<div class="highlight"><pre><span></span><span class="n">matches</span> <span class="o">=</span> <span class="n">matcher</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+<span class="nb">len</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>3202
+</pre></div>
+
+
+<p>We can access the matched spans through loops.</p>
+<div class="highlight"><pre><span></span><span class="n">match_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">doc</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]</span> <span class="k">for</span> <span class="n">match_id</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="ow">in</span> <span class="n">matches</span><span class="p">]</span>
+<span class="n">match_list</span><span class="p">[</span><span class="mi">100</span><span class="p">:</span><span class="mi">105</span><span class="p">]</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>[other purposes, private note, own seal, little problem, serious one]
+</pre></div>
+
+
+<p>There's a lot more we can do with spacy, it is really well <a href="https://spacy.io/usage/spacy-101">documented</a> and easy to pick up. So if you're looking to do some more NLP alongside what <a href="https://www.nltk.org/">nltk</a> has to offer, check out spacy!</p>
+ </div>
+</div>
+ </div>
+</body>
+</html>

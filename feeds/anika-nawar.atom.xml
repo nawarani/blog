@@ -1,5 +1,611 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>blog - Anika Nawar</title><link href="https://nawarani.github.io/blog/" rel="alternate"></link><link href="https://nawarani.github.io/blog/feeds/anika-nawar.atom.xml" rel="self"></link><id>https://nawarani.github.io/blog/</id><updated>2019-09-30T00:00:00-04:00</updated><entry><title>Blog 2 - Plotting ROC curve in Altair</title><link href="https://nawarani.github.io/blog/blog-2.html" rel="alternate"></link><published>2019-09-30T00:00:00-04:00</published><updated>2019-09-30T00:00:00-04:00</updated><author><name>Anika Nawar</name></author><id>tag:nawarani.github.io,2019-09-30:/blog/blog-2.html</id><summary type="html">&lt;p&gt;So you can make an ROC curve in pyplot but it looks like this.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>blog - Anika Nawar</title><link href="https://nawarani.github.io/blog/" rel="alternate"></link><link href="https://nawarani.github.io/blog/feeds/anika-nawar.atom.xml" rel="self"></link><id>https://nawarani.github.io/blog/</id><updated>2019-10-07T00:00:00-04:00</updated><entry><title>Intro to Naural Language Processing with spaCy</title><link href="https://nawarani.github.io/blog/blog-3.html" rel="alternate"></link><published>2019-10-07T00:00:00-04:00</published><updated>2019-10-07T00:00:00-04:00</updated><author><name>Anika Nawar</name></author><id>tag:nawarani.github.io,2019-10-07:/blog/blog-3.html</id><summary type="html">&lt;h2&gt;spaCy&lt;/h2&gt;
+&lt;p&gt;spaCy is a natural language processing library for python. Some of its features are:
+- non-destructive tokenization,
+- named entity recognition,
+- pre-trained models
+- support for 52+ individual langueages.&lt;/p&gt;
+&lt;p&gt;Since coding is best explained through examples, in this blog, we will use spacy to work through a book from &lt;a href="http://www.gutenberg.org/ebooks/1661"&gt;Project Gutenberg&lt;/a&gt;.&lt;/p&gt;
+&lt;h3&gt;Finding …&lt;/h3&gt;</summary><content type="html">&lt;h2&gt;spaCy&lt;/h2&gt;
+&lt;p&gt;spaCy is a natural language processing library for python. Some of its features are:
+- non-destructive tokenization,
+- named entity recognition,
+- pre-trained models
+- support for 52+ individual langueages.&lt;/p&gt;
+&lt;p&gt;Since coding is best explained through examples, in this blog, we will use spacy to work through a book from &lt;a href="http://www.gutenberg.org/ebooks/1661"&gt;Project Gutenberg&lt;/a&gt;.&lt;/p&gt;
+&lt;h3&gt;Finding proper nouns and custom patterns in The Adventures of Sherlock Holmes&lt;/h3&gt;
+&lt;h4&gt;Install spacy and language model&lt;/h4&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="err"&gt;!&lt;/span&gt; &lt;span class="n"&gt;pip&lt;/span&gt; &lt;span class="n"&gt;install&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;U&lt;/span&gt; &lt;span class="n"&gt;spacy&lt;/span&gt;
+&lt;span class="err"&gt;!&lt;/span&gt; &lt;span class="n"&gt;python&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;m&lt;/span&gt; &lt;span class="n"&gt;spacy&lt;/span&gt; &lt;span class="n"&gt;download&lt;/span&gt; &lt;span class="n"&gt;en_core_web_sm&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h4&gt;Imports&lt;/h4&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;spacy&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h4&gt;Load model as the nlp onject&lt;/h4&gt;
+&lt;p&gt;spacy language and models can be downloaded as python packages. Some of the models and langugae packages can be found &lt;a href="https://spacy.io/usage/models"&gt;here&lt;/a&gt;. For this example, we will be using the small english languge web model 'en_core_web_sm'.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;nlp&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;spacy&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;load&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;en_core_web_sm&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h4&gt;Load text&lt;/h4&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;text&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;open&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;data/1661-0.txt&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;read&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The length of the text is more than the default max length, so we reassign the max length of text to reflect that.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;nlp&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;max_length&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;len&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;text&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h4&gt;Process text&lt;/h4&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;doc&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;nlp&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;text&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h4&gt;Find sentences in text&lt;/h4&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;sentences&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;list&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;doc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sents&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;we can access the sentences through a loop.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;long_sentences&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;sentence&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;sentence&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;sentences&lt;/span&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="nb"&gt;len&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sentence&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="mi"&gt;100&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;span class="n"&gt;long_sentences&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;A shock of orange hair, a
+pale face disfigured by a horrible scar, which, by its contraction, has
+turned up the outer edge of his upper lip, a bulldog chin, and a pair
+of very penetrating dark eyes, which present a singular contrast to the
+colour of his hair, all mark him out from amid the common crowd of
+mendicants and so, too, does his wit, for he is ever ready with a reply
+to any piece of chaff which may be thrown at him by the passers-by.
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h4&gt;Tokenization, Lemmatization and labeling of named entities&lt;/h4&gt;
+&lt;p&gt;When we call the nlp object on our text, it calls for a pipeline object that tokenizes, tags, parses and recognizes entities. We can access the tokens and entities through a loop, call for the lemmas of each word through .lemma_ and find labels for the entities through .label_&lt;/p&gt;
+&lt;p&gt;&lt;img alt="" src="https://d33wubrfki0l68.cloudfront.net/16b2ccafeefd6d547171afa23f9ac62f159e353d/48b91/pipeline-7a14d4edd18f3edfee8f34393bff2992.svg"&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;token_list&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;token&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;token&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;doc&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;span class="n"&gt;token_list&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;1000&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="mi"&gt;1010&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;[problem, ., I, rang, the, bell, , and, was, shown]
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;lemma_list&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;token&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;lemma_&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;token&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;doc&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;span class="n"&gt;lemma_list&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;1000&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="mi"&gt;1010&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;[&amp;#39;problem&amp;#39;, &amp;#39;.&amp;#39;, &amp;#39;-PRON-&amp;#39;, &amp;#39;ring&amp;#39;, &amp;#39;the&amp;#39;, &amp;#39;bell&amp;#39;, &amp;#39;\n&amp;#39;, &amp;#39;and&amp;#39;, &amp;#39;be&amp;#39;, &amp;#39;show&amp;#39;]
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;entity_list&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[]&lt;/span&gt;
+&lt;span class="n"&gt;label_list&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[]&lt;/span&gt;
+&lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;ent&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;doc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;ents&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+    &lt;span class="n"&gt;entity_list&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;append&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;ent&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;label_list&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;append&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;ent&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;label_&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;
+&lt;span class="k"&gt;while&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+    &lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;entity_list&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;:&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;label_list&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
+    &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;+=&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;Gutenberg&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;PERSON&lt;/span&gt;
+&lt;span class="n"&gt;The&lt;/span&gt; &lt;span class="n"&gt;Adventures&lt;/span&gt; &lt;span class="n"&gt;of&lt;/span&gt; &lt;span class="n"&gt;Sherlock&lt;/span&gt; &lt;span class="n"&gt;Holmes&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;WORK_OF_ART&lt;/span&gt;
+&lt;span class="n"&gt;Arthur&lt;/span&gt; &lt;span class="n"&gt;Conan&lt;/span&gt; &lt;span class="n"&gt;Doyle&lt;/span&gt;
+
+ &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;ORG&lt;/span&gt;
+&lt;span class="n"&gt;the&lt;/span&gt; &lt;span class="n"&gt;Project&lt;/span&gt; &lt;span class="n"&gt;Gutenberg&lt;/span&gt; &lt;span class="n"&gt;License&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;ORG&lt;/span&gt;
+&lt;span class="n"&gt;eBook&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;LAW&lt;/span&gt;
+&lt;span class="n"&gt;The&lt;/span&gt; &lt;span class="n"&gt;Adventures&lt;/span&gt; &lt;span class="n"&gt;of&lt;/span&gt; &lt;span class="n"&gt;Sherlock&lt;/span&gt; &lt;span class="n"&gt;Holmes&lt;/span&gt;
+
+ &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;WORK_OF_ART&lt;/span&gt;
+&lt;span class="n"&gt;Arthur&lt;/span&gt; &lt;span class="n"&gt;Conan&lt;/span&gt; &lt;span class="n"&gt;Doyle&lt;/span&gt;
+
+&lt;span class="n"&gt;Release&lt;/span&gt; &lt;span class="n"&gt;Date&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;PERSON&lt;/span&gt;
+&lt;span class="n"&gt;November&lt;/span&gt; &lt;span class="mi"&gt;29&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2002&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;DATE&lt;/span&gt;
+&lt;span class="n"&gt;May&lt;/span&gt; &lt;span class="mi"&gt;20&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2019&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;DATE&lt;/span&gt;
+&lt;span class="n"&gt;English&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;LANGUAGE&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;As we can see, it's not perfect. Often times, for bigger text documents like this it is better to use larger models. 'en_core_web_sm' is a smaller model, as denoted by the 'sm' suffix.&lt;/p&gt;
+&lt;h4&gt;Find all the proper nouns in the text&lt;/h4&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;proper_noun_list&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;token&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;text&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;token&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;doc&lt;/span&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;token&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;pos_&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;PROPN&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;Number of proper nouns in text:&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nb"&gt;len&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;proper_noun_list&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;Example:&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;proper_noun_list&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;1537&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="mi"&gt;1550&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;Number of proper nouns in text: 5070
+Example: [&amp;#39;Miss&amp;#39;, &amp;#39;Turner&amp;#39;, &amp;#39;James&amp;#39;, &amp;#39;Mr.&amp;#39;, &amp;#39;Holmes&amp;#39;, &amp;#39;Miss&amp;#39;, &amp;#39;Turner&amp;#39;, &amp;#39;God&amp;#39;, &amp;#39;Holmes&amp;#39;, &amp;#39;Lestrade&amp;#39;, &amp;#39;James&amp;#39;, &amp;#39;McCarthy&amp;#39;, &amp;#39;Holmes&amp;#39;]
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The proper nouns can also be accessed through loops.&lt;/p&gt;
+&lt;h4&gt;Stop words&lt;/h4&gt;
+&lt;p&gt;Stop words and punctuations can be targeted through is_stop and is_punct.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;clean_doc&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;token&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;text&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;token&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;doc&lt;/span&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="n"&gt;token&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;is_stop&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="ow"&gt;and&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="n"&gt;token&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;is_punct&lt;/span&gt;&lt;span class="p"&gt;)]&lt;/span&gt;
+&lt;span class="n"&gt;clean_doc&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;[&amp;#39;\n&amp;#39;,
+ &amp;#39;Project&amp;#39;,
+ &amp;#39;Gutenberg&amp;#39;,
+ &amp;#39;Adventures&amp;#39;,
+ &amp;#39;Sherlock&amp;#39;,
+ &amp;#39;Holmes&amp;#39;,
+ &amp;#39;Arthur&amp;#39;,
+ &amp;#39;Conan&amp;#39;,
+ &amp;#39;Doyle&amp;#39;,
+ &amp;#39;\n\n&amp;#39;]
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;We can use our own stop_words or make a default stop_word not a stop_word with in the following &lt;a href="https://stackoverflow.com/questions/41170726/add-remove-stop-words-with-spacy"&gt;process&lt;/a&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;nlp&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;vocab&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;the&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;is_stop&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="bp"&gt;False&lt;/span&gt;
+&lt;span class="n"&gt;nlp&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;vocab&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;is_stop&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="bp"&gt;True&lt;/span&gt;
+&lt;span class="n"&gt;clean_text&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;token&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;text&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;token&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;doc&lt;/span&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="n"&gt;token&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;is_stop&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="ow"&gt;and&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="n"&gt;token&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;is_punct&lt;/span&gt;&lt;span class="p"&gt;)]&lt;/span&gt;
+&lt;span class="n"&gt;clean_text&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;[&amp;#39;Project&amp;#39;,
+ &amp;#39;Gutenberg&amp;#39;,
+ &amp;#39;Adventures&amp;#39;,
+ &amp;#39;Sherlock&amp;#39;,
+ &amp;#39;Holmes&amp;#39;,
+ &amp;#39;Arthur&amp;#39;,
+ &amp;#39;Conan&amp;#39;,
+ &amp;#39;Doyle&amp;#39;,
+ &amp;#39;\n\n&amp;#39;,
+ &amp;#39;eBook&amp;#39;]
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h4&gt;dependencies and visualization through displacy&lt;/h4&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c1"&gt;# Print the text and the predicted part-of-speech tag&lt;/span&gt;
+&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;pandas&lt;/span&gt; &lt;span class="kn"&gt;as&lt;/span&gt; &lt;span class="nn"&gt;pd&lt;/span&gt;
+&lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;Sentence:&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;sentences&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;637&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
+&lt;span class="n"&gt;sent_df&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;pd&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;DataFrame&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;columns&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;text&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;pos&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;dep&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;related word&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
+&lt;span class="n"&gt;text_list&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[]&lt;/span&gt;
+&lt;span class="n"&gt;pos_list&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[]&lt;/span&gt;
+&lt;span class="n"&gt;dep_list&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[]&lt;/span&gt;
+&lt;span class="n"&gt;rel_list&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[]&lt;/span&gt;
+&lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;word&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;sentences&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;637&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt;
+    &lt;span class="n"&gt;text_list&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;append&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;word&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;text&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;pos_list&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;append&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;word&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;pos_&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;dep_list&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;append&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;word&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;dep_&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;rel_list&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;append&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;word&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;head&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;text&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;sent_df&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;text&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;text_list&lt;/span&gt;
+&lt;span class="n"&gt;sent_df&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;pos&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;pos_list&lt;/span&gt;
+&lt;span class="n"&gt;sent_df&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;dep&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;dep_list&lt;/span&gt;
+&lt;span class="n"&gt;sent_df&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;related word&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;rel_list&lt;/span&gt;
+&lt;span class="n"&gt;sent_df&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;Sentence&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;I&lt;/span&gt; &lt;span class="n"&gt;wish&lt;/span&gt; &lt;span class="n"&gt;she&lt;/span&gt; &lt;span class="n"&gt;had&lt;/span&gt; &lt;span class="n"&gt;been&lt;/span&gt; &lt;span class="n"&gt;of&lt;/span&gt; &lt;span class="n"&gt;my&lt;/span&gt; &lt;span class="n"&gt;own&lt;/span&gt; &lt;span class="n"&gt;station&lt;/span&gt;&lt;span class="o"&gt;!&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div&gt;
+&lt;style scoped&gt;
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+&lt;/style&gt;
+&lt;table border="1" class="dataframe"&gt;
+  &lt;thead&gt;
+    &lt;tr style="text-align: right;"&gt;
+      &lt;th&gt;&lt;/th&gt;
+      &lt;th&gt;text&lt;/th&gt;
+      &lt;th&gt;pos&lt;/th&gt;
+      &lt;th&gt;dep&lt;/th&gt;
+      &lt;th&gt;related word&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;th&gt;0&lt;/th&gt;
+      &lt;td&gt;I&lt;/td&gt;
+      &lt;td&gt;PRON&lt;/td&gt;
+      &lt;td&gt;nsubj&lt;/td&gt;
+      &lt;td&gt;wish&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;1&lt;/th&gt;
+      &lt;td&gt;wish&lt;/td&gt;
+      &lt;td&gt;VERB&lt;/td&gt;
+      &lt;td&gt;ROOT&lt;/td&gt;
+      &lt;td&gt;wish&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;2&lt;/th&gt;
+      &lt;td&gt;she&lt;/td&gt;
+      &lt;td&gt;PRON&lt;/td&gt;
+      &lt;td&gt;nsubj&lt;/td&gt;
+      &lt;td&gt;been&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;3&lt;/th&gt;
+      &lt;td&gt;had&lt;/td&gt;
+      &lt;td&gt;AUX&lt;/td&gt;
+      &lt;td&gt;aux&lt;/td&gt;
+      &lt;td&gt;been&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;4&lt;/th&gt;
+      &lt;td&gt;been&lt;/td&gt;
+      &lt;td&gt;AUX&lt;/td&gt;
+      &lt;td&gt;ccomp&lt;/td&gt;
+      &lt;td&gt;wish&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;5&lt;/th&gt;
+      &lt;td&gt;of&lt;/td&gt;
+      &lt;td&gt;ADP&lt;/td&gt;
+      &lt;td&gt;prep&lt;/td&gt;
+      &lt;td&gt;been&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;6&lt;/th&gt;
+      &lt;td&gt;my&lt;/td&gt;
+      &lt;td&gt;PRON&lt;/td&gt;
+      &lt;td&gt;poss&lt;/td&gt;
+      &lt;td&gt;station&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;7&lt;/th&gt;
+      &lt;td&gt;own&lt;/td&gt;
+      &lt;td&gt;ADJ&lt;/td&gt;
+      &lt;td&gt;amod&lt;/td&gt;
+      &lt;td&gt;station&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;8&lt;/th&gt;
+      &lt;td&gt;station&lt;/td&gt;
+      &lt;td&gt;NOUN&lt;/td&gt;
+      &lt;td&gt;pobj&lt;/td&gt;
+      &lt;td&gt;of&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;9&lt;/th&gt;
+      &lt;td&gt;!&lt;/td&gt;
+      &lt;td&gt;PUNCT&lt;/td&gt;
+      &lt;td&gt;punct&lt;/td&gt;
+      &lt;td&gt;wish&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;10&lt;/th&gt;
+      &lt;td&gt;\n&lt;/td&gt;
+      &lt;td&gt;SPACE&lt;/td&gt;
+      &lt;td&gt;&lt;/td&gt;
+      &lt;td&gt;!&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;spacy&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;displacy&lt;/span&gt;
+&lt;span class="n"&gt;displacy&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;render&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sentences&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;6751&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="n"&gt;style&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;dep&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:lang="en" id="c1d4b15930c0417caaf7354a0c9d9d82-0" class="displacy" width="3900" height="574.5" direction="ltr" style="max-width: none; height: 574.5px; color: #000000; background: #ffffff; font-family: Arial; direction: ltr"&gt;
+&lt;text class="displacy-token" fill="currentColor" text-anchor="middle" y="484.5"&gt;
+    &lt;tspan class="displacy-word" fill="currentColor" x="50"&gt;“&lt;/tspan&gt;
+    &lt;tspan class="displacy-tag" dy="2em" fill="currentColor" x="50"&gt;PUNCT&lt;/tspan&gt;
+&lt;/text&gt;&lt;/p&gt;
+&lt;p&gt;&lt;text class="displacy-token" fill="currentColor" text-anchor="middle" y="484.5"&gt;
+    &lt;tspan class="displacy-word" fill="currentColor" x="225"&gt;‘&lt;/tspan&gt;
+    &lt;tspan class="displacy-tag" dy="2em" fill="currentColor" x="225"&gt;PUNCT&lt;/tspan&gt;
+&lt;/text&gt;&lt;/p&gt;
+&lt;p&gt;&lt;text class="displacy-token" fill="currentColor" text-anchor="middle" y="484.5"&gt;
+    &lt;tspan class="displacy-word" fill="currentColor" x="400"&gt;Jephro,’&lt;/tspan&gt;
+    &lt;tspan class="displacy-tag" dy="2em" fill="currentColor" x="400"&gt;PROPN&lt;/tspan&gt;
+&lt;/text&gt;&lt;/p&gt;
+&lt;p&gt;&lt;text class="displacy-token" fill="currentColor" text-anchor="middle" y="484.5"&gt;
+    &lt;tspan class="displacy-word" fill="currentColor" x="575"&gt;said&lt;/tspan&gt;
+    &lt;tspan class="displacy-tag" dy="2em" fill="currentColor" x="575"&gt;VERB&lt;/tspan&gt;
+&lt;/text&gt;&lt;/p&gt;
+&lt;p&gt;&lt;text class="displacy-token" fill="currentColor" text-anchor="middle" y="484.5"&gt;
+    &lt;tspan class="displacy-word" fill="currentColor" x="750"&gt;she, ‘&lt;/tspan&gt;
+    &lt;tspan class="displacy-tag" dy="2em" fill="currentColor" x="750"&gt;PRON&lt;/tspan&gt;
+&lt;/text&gt;&lt;/p&gt;
+&lt;p&gt;&lt;text class="displacy-token" fill="currentColor" text-anchor="middle" y="484.5"&gt;
+    &lt;tspan class="displacy-word" fill="currentColor" x="925"&gt;there&lt;/tspan&gt;
+    &lt;tspan class="displacy-tag" dy="2em" fill="currentColor" x="925"&gt;PRON&lt;/tspan&gt;
+&lt;/text&gt;&lt;/p&gt;
+&lt;p&gt;&lt;text class="displacy-token" fill="currentColor" text-anchor="middle" y="484.5"&gt;
+    &lt;tspan class="displacy-word" fill="currentColor" x="1100"&gt;is&lt;/tspan&gt;
+    &lt;tspan class="displacy-tag" dy="2em" fill="currentColor" x="1100"&gt;AUX&lt;/tspan&gt;
+&lt;/text&gt;&lt;/p&gt;
+&lt;p&gt;&lt;text class="displacy-token" fill="currentColor" text-anchor="middle" y="484.5"&gt;
+    &lt;tspan class="displacy-word" fill="currentColor" x="1275"&gt;an&lt;/tspan&gt;
+    &lt;tspan class="displacy-tag" dy="2em" fill="currentColor" x="1275"&gt;DET&lt;/tspan&gt;
+&lt;/text&gt;&lt;/p&gt;
+&lt;p&gt;&lt;text class="displacy-token" fill="currentColor" text-anchor="middle" y="484.5"&gt;
+    &lt;tspan class="displacy-word" fill="currentColor" x="1450"&gt;impertinent&lt;/tspan&gt;
+    &lt;tspan class="displacy-tag" dy="2em" fill="currentColor" x="1450"&gt;ADJ&lt;/tspan&gt;
+&lt;/text&gt;&lt;/p&gt;
+&lt;p&gt;&lt;text class="displacy-token" fill="currentColor" text-anchor="middle" y="484.5"&gt;
+    &lt;tspan class="displacy-word" fill="currentColor" x="1625"&gt;fellow&lt;/tspan&gt;
+    &lt;tspan class="displacy-tag" dy="2em" fill="currentColor" x="1625"&gt;NOUN&lt;/tspan&gt;
+&lt;/text&gt;&lt;/p&gt;
+&lt;p&gt;&lt;text class="displacy-token" fill="currentColor" text-anchor="middle" y="484.5"&gt;
+    &lt;tspan class="displacy-word" fill="currentColor" x="1800"&gt;upon&lt;/tspan&gt;
+    &lt;tspan class="displacy-tag" dy="2em" fill="currentColor" x="1800"&gt;SCONJ&lt;/tspan&gt;
+&lt;/text&gt;&lt;/p&gt;
+&lt;p&gt;&lt;text class="displacy-token" fill="currentColor" text-anchor="middle" y="484.5"&gt;
+    &lt;tspan class="displacy-word" fill="currentColor" x="1975"&gt;the&lt;/tspan&gt;
+    &lt;tspan class="displacy-tag" dy="2em" fill="currentColor" x="1975"&gt;DET&lt;/tspan&gt;
+&lt;/text&gt;&lt;/p&gt;
+&lt;p&gt;&lt;text class="displacy-token" fill="currentColor" text-anchor="middle" y="484.5"&gt;
+    &lt;tspan class="displacy-word" fill="currentColor" x="2150"&gt;road&lt;/tspan&gt;
+    &lt;tspan class="displacy-tag" dy="2em" fill="currentColor" x="2150"&gt;NOUN&lt;/tspan&gt;
+&lt;/text&gt;&lt;/p&gt;
+&lt;p&gt;&lt;text class="displacy-token" fill="currentColor" text-anchor="middle" y="484.5"&gt;
+    &lt;tspan class="displacy-word" fill="currentColor" x="2325"&gt;
+&lt;/tspan&gt;
+    &lt;tspan class="displacy-tag" dy="2em" fill="currentColor" x="2325"&gt;SPACE&lt;/tspan&gt;
+&lt;/text&gt;&lt;/p&gt;
+&lt;p&gt;&lt;text class="displacy-token" fill="currentColor" text-anchor="middle" y="484.5"&gt;
+    &lt;tspan class="displacy-word" fill="currentColor" x="2500"&gt;there&lt;/tspan&gt;
+    &lt;tspan class="displacy-tag" dy="2em" fill="currentColor" x="2500"&gt;ADV&lt;/tspan&gt;
+&lt;/text&gt;&lt;/p&gt;
+&lt;p&gt;&lt;text class="displacy-token" fill="currentColor" text-anchor="middle" y="484.5"&gt;
+    &lt;tspan class="displacy-word" fill="currentColor" x="2675"&gt;who&lt;/tspan&gt;
+    &lt;tspan class="displacy-tag" dy="2em" fill="currentColor" x="2675"&gt;PRON&lt;/tspan&gt;
+&lt;/text&gt;&lt;/p&gt;
+&lt;p&gt;&lt;text class="displacy-token" fill="currentColor" text-anchor="middle" y="484.5"&gt;
+    &lt;tspan class="displacy-word" fill="currentColor" x="2850"&gt;stares&lt;/tspan&gt;
+    &lt;tspan class="displacy-tag" dy="2em" fill="currentColor" x="2850"&gt;VERB&lt;/tspan&gt;
+&lt;/text&gt;&lt;/p&gt;
+&lt;p&gt;&lt;text class="displacy-token" fill="currentColor" text-anchor="middle" y="484.5"&gt;
+    &lt;tspan class="displacy-word" fill="currentColor" x="3025"&gt;up&lt;/tspan&gt;
+    &lt;tspan class="displacy-tag" dy="2em" fill="currentColor" x="3025"&gt;ADP&lt;/tspan&gt;
+&lt;/text&gt;&lt;/p&gt;
+&lt;p&gt;&lt;text class="displacy-token" fill="currentColor" text-anchor="middle" y="484.5"&gt;
+    &lt;tspan class="displacy-word" fill="currentColor" x="3200"&gt;at&lt;/tspan&gt;
+    &lt;tspan class="displacy-tag" dy="2em" fill="currentColor" x="3200"&gt;ADP&lt;/tspan&gt;
+&lt;/text&gt;&lt;/p&gt;
+&lt;p&gt;&lt;text class="displacy-token" fill="currentColor" text-anchor="middle" y="484.5"&gt;
+    &lt;tspan class="displacy-word" fill="currentColor" x="3375"&gt;Miss&lt;/tspan&gt;
+    &lt;tspan class="displacy-tag" dy="2em" fill="currentColor" x="3375"&gt;PROPN&lt;/tspan&gt;
+&lt;/text&gt;&lt;/p&gt;
+&lt;p&gt;&lt;text class="displacy-token" fill="currentColor" text-anchor="middle" y="484.5"&gt;
+    &lt;tspan class="displacy-word" fill="currentColor" x="3550"&gt;Hunter.’&lt;/tspan&gt;
+    &lt;tspan class="displacy-tag" dy="2em" fill="currentColor" x="3550"&gt;PROPN&lt;/tspan&gt;
+&lt;/text&gt;&lt;/p&gt;
+&lt;p&gt;&lt;text class="displacy-token" fill="currentColor" text-anchor="middle" y="484.5"&gt;
+    &lt;tspan class="displacy-word" fill="currentColor" x="3725"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;/tspan&gt;
+    &lt;tspan class="displacy-tag" dy="2em" fill="currentColor" x="3725"&gt;SPACE&lt;/tspan&gt;
+&lt;/text&gt;&lt;/p&gt;
+&lt;p&gt;&lt;g class="displacy-arrow"&gt;
+    &lt;path class="displacy-arc" id="arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-0" stroke-width="2px" d="M70,439.5 C70,264.5 385.0,264.5 385.0,439.5" fill="none" stroke="currentColor"/&gt;
+    &lt;text dy="1.25em" style="font-size: 0.8em; letter-spacing: 1px"&gt;
+        &lt;textPath xlink:href="#arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-0" class="displacy-label" startOffset="50%" side="left" fill="currentColor" text-anchor="middle"&gt;punct&lt;/textPath&gt;
+    &lt;/text&gt;
+    &lt;path class="displacy-arrowhead" d="M70,441.5 L62,429.5 78,429.5" fill="currentColor"/&gt;
+&lt;/g&gt;&lt;/p&gt;
+&lt;p&gt;&lt;g class="displacy-arrow"&gt;
+    &lt;path class="displacy-arc" id="arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-1" stroke-width="2px" d="M245,439.5 C245,352.0 380.0,352.0 380.0,439.5" fill="none" stroke="currentColor"/&gt;
+    &lt;text dy="1.25em" style="font-size: 0.8em; letter-spacing: 1px"&gt;
+        &lt;textPath xlink:href="#arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-1" class="displacy-label" startOffset="50%" side="left" fill="currentColor" text-anchor="middle"&gt;punct&lt;/textPath&gt;
+    &lt;/text&gt;
+    &lt;path class="displacy-arrowhead" d="M245,441.5 L237,429.5 253,429.5" fill="currentColor"/&gt;
+&lt;/g&gt;&lt;/p&gt;
+&lt;p&gt;&lt;g class="displacy-arrow"&gt;
+    &lt;path class="displacy-arc" id="arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-2" stroke-width="2px" d="M420,439.5 C420,352.0 555.0,352.0 555.0,439.5" fill="none" stroke="currentColor"/&gt;
+    &lt;text dy="1.25em" style="font-size: 0.8em; letter-spacing: 1px"&gt;
+        &lt;textPath xlink:href="#arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-2" class="displacy-label" startOffset="50%" side="left" fill="currentColor" text-anchor="middle"&gt;dep&lt;/textPath&gt;
+    &lt;/text&gt;
+    &lt;path class="displacy-arrowhead" d="M555.0,441.5 L563.0,429.5 547.0,429.5" fill="currentColor"/&gt;
+&lt;/g&gt;&lt;/p&gt;
+&lt;p&gt;&lt;g class="displacy-arrow"&gt;
+    &lt;path class="displacy-arc" id="arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-3" stroke-width="2px" d="M595,439.5 C595,352.0 730.0,352.0 730.0,439.5" fill="none" stroke="currentColor"/&gt;
+    &lt;text dy="1.25em" style="font-size: 0.8em; letter-spacing: 1px"&gt;
+        &lt;textPath xlink:href="#arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-3" class="displacy-label" startOffset="50%" side="left" fill="currentColor" text-anchor="middle"&gt;nsubj&lt;/textPath&gt;
+    &lt;/text&gt;
+    &lt;path class="displacy-arrowhead" d="M730.0,441.5 L738.0,429.5 722.0,429.5" fill="currentColor"/&gt;
+&lt;/g&gt;&lt;/p&gt;
+&lt;p&gt;&lt;g class="displacy-arrow"&gt;
+    &lt;path class="displacy-arc" id="arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-4" stroke-width="2px" d="M945,439.5 C945,352.0 1080.0,352.0 1080.0,439.5" fill="none" stroke="currentColor"/&gt;
+    &lt;text dy="1.25em" style="font-size: 0.8em; letter-spacing: 1px"&gt;
+        &lt;textPath xlink:href="#arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-4" class="displacy-label" startOffset="50%" side="left" fill="currentColor" text-anchor="middle"&gt;expl&lt;/textPath&gt;
+    &lt;/text&gt;
+    &lt;path class="displacy-arrowhead" d="M945,441.5 L937,429.5 953,429.5" fill="currentColor"/&gt;
+&lt;/g&gt;&lt;/p&gt;
+&lt;p&gt;&lt;g class="displacy-arrow"&gt;
+    &lt;path class="displacy-arc" id="arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-5" stroke-width="2px" d="M595,439.5 C595,177.0 1090.0,177.0 1090.0,439.5" fill="none" stroke="currentColor"/&gt;
+    &lt;text dy="1.25em" style="font-size: 0.8em; letter-spacing: 1px"&gt;
+        &lt;textPath xlink:href="#arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-5" class="displacy-label" startOffset="50%" side="left" fill="currentColor" text-anchor="middle"&gt;ccomp&lt;/textPath&gt;
+    &lt;/text&gt;
+    &lt;path class="displacy-arrowhead" d="M1090.0,441.5 L1098.0,429.5 1082.0,429.5" fill="currentColor"/&gt;
+&lt;/g&gt;&lt;/p&gt;
+&lt;p&gt;&lt;g class="displacy-arrow"&gt;
+    &lt;path class="displacy-arc" id="arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-6" stroke-width="2px" d="M1295,439.5 C1295,264.5 1610.0,264.5 1610.0,439.5" fill="none" stroke="currentColor"/&gt;
+    &lt;text dy="1.25em" style="font-size: 0.8em; letter-spacing: 1px"&gt;
+        &lt;textPath xlink:href="#arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-6" class="displacy-label" startOffset="50%" side="left" fill="currentColor" text-anchor="middle"&gt;det&lt;/textPath&gt;
+    &lt;/text&gt;
+    &lt;path class="displacy-arrowhead" d="M1295,441.5 L1287,429.5 1303,429.5" fill="currentColor"/&gt;
+&lt;/g&gt;&lt;/p&gt;
+&lt;p&gt;&lt;g class="displacy-arrow"&gt;
+    &lt;path class="displacy-arc" id="arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-7" stroke-width="2px" d="M1470,439.5 C1470,352.0 1605.0,352.0 1605.0,439.5" fill="none" stroke="currentColor"/&gt;
+    &lt;text dy="1.25em" style="font-size: 0.8em; letter-spacing: 1px"&gt;
+        &lt;textPath xlink:href="#arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-7" class="displacy-label" startOffset="50%" side="left" fill="currentColor" text-anchor="middle"&gt;amod&lt;/textPath&gt;
+    &lt;/text&gt;
+    &lt;path class="displacy-arrowhead" d="M1470,441.5 L1462,429.5 1478,429.5" fill="currentColor"/&gt;
+&lt;/g&gt;&lt;/p&gt;
+&lt;p&gt;&lt;g class="displacy-arrow"&gt;
+    &lt;path class="displacy-arc" id="arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-8" stroke-width="2px" d="M1120,439.5 C1120,177.0 1615.0,177.0 1615.0,439.5" fill="none" stroke="currentColor"/&gt;
+    &lt;text dy="1.25em" style="font-size: 0.8em; letter-spacing: 1px"&gt;
+        &lt;textPath xlink:href="#arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-8" class="displacy-label" startOffset="50%" side="left" fill="currentColor" text-anchor="middle"&gt;attr&lt;/textPath&gt;
+    &lt;/text&gt;
+    &lt;path class="displacy-arrowhead" d="M1615.0,441.5 L1623.0,429.5 1607.0,429.5" fill="currentColor"/&gt;
+&lt;/g&gt;&lt;/p&gt;
+&lt;p&gt;&lt;g class="displacy-arrow"&gt;
+    &lt;path class="displacy-arc" id="arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-9" stroke-width="2px" d="M1645,439.5 C1645,352.0 1780.0,352.0 1780.0,439.5" fill="none" stroke="currentColor"/&gt;
+    &lt;text dy="1.25em" style="font-size: 0.8em; letter-spacing: 1px"&gt;
+        &lt;textPath xlink:href="#arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-9" class="displacy-label" startOffset="50%" side="left" fill="currentColor" text-anchor="middle"&gt;prep&lt;/textPath&gt;
+    &lt;/text&gt;
+    &lt;path class="displacy-arrowhead" d="M1780.0,441.5 L1788.0,429.5 1772.0,429.5" fill="currentColor"/&gt;
+&lt;/g&gt;&lt;/p&gt;
+&lt;p&gt;&lt;g class="displacy-arrow"&gt;
+    &lt;path class="displacy-arc" id="arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-10" stroke-width="2px" d="M1995,439.5 C1995,352.0 2130.0,352.0 2130.0,439.5" fill="none" stroke="currentColor"/&gt;
+    &lt;text dy="1.25em" style="font-size: 0.8em; letter-spacing: 1px"&gt;
+        &lt;textPath xlink:href="#arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-10" class="displacy-label" startOffset="50%" side="left" fill="currentColor" text-anchor="middle"&gt;det&lt;/textPath&gt;
+    &lt;/text&gt;
+    &lt;path class="displacy-arrowhead" d="M1995,441.5 L1987,429.5 2003,429.5" fill="currentColor"/&gt;
+&lt;/g&gt;&lt;/p&gt;
+&lt;p&gt;&lt;g class="displacy-arrow"&gt;
+    &lt;path class="displacy-arc" id="arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-11" stroke-width="2px" d="M1820,439.5 C1820,264.5 2135.0,264.5 2135.0,439.5" fill="none" stroke="currentColor"/&gt;
+    &lt;text dy="1.25em" style="font-size: 0.8em; letter-spacing: 1px"&gt;
+        &lt;textPath xlink:href="#arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-11" class="displacy-label" startOffset="50%" side="left" fill="currentColor" text-anchor="middle"&gt;pobj&lt;/textPath&gt;
+    &lt;/text&gt;
+    &lt;path class="displacy-arrowhead" d="M2135.0,441.5 L2143.0,429.5 2127.0,429.5" fill="currentColor"/&gt;
+&lt;/g&gt;&lt;/p&gt;
+&lt;p&gt;&lt;g class="displacy-arrow"&gt;
+    &lt;path class="displacy-arc" id="arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-12" stroke-width="2px" d="M2170,439.5 C2170,352.0 2305.0,352.0 2305.0,439.5" fill="none" stroke="currentColor"/&gt;
+    &lt;text dy="1.25em" style="font-size: 0.8em; letter-spacing: 1px"&gt;
+        &lt;textPath xlink:href="#arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-12" class="displacy-label" startOffset="50%" side="left" fill="currentColor" text-anchor="middle"&gt;&lt;/textPath&gt;
+    &lt;/text&gt;
+    &lt;path class="displacy-arrowhead" d="M2305.0,441.5 L2313.0,429.5 2297.0,429.5" fill="currentColor"/&gt;
+&lt;/g&gt;&lt;/p&gt;
+&lt;p&gt;&lt;g class="displacy-arrow"&gt;
+    &lt;path class="displacy-arc" id="arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-13" stroke-width="2px" d="M2170,439.5 C2170,264.5 2485.0,264.5 2485.0,439.5" fill="none" stroke="currentColor"/&gt;
+    &lt;text dy="1.25em" style="font-size: 0.8em; letter-spacing: 1px"&gt;
+        &lt;textPath xlink:href="#arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-13" class="displacy-label" startOffset="50%" side="left" fill="currentColor" text-anchor="middle"&gt;advmod&lt;/textPath&gt;
+    &lt;/text&gt;
+    &lt;path class="displacy-arrowhead" d="M2485.0,441.5 L2493.0,429.5 2477.0,429.5" fill="currentColor"/&gt;
+&lt;/g&gt;&lt;/p&gt;
+&lt;p&gt;&lt;g class="displacy-arrow"&gt;
+    &lt;path class="displacy-arc" id="arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-14" stroke-width="2px" d="M2695,439.5 C2695,352.0 2830.0,352.0 2830.0,439.5" fill="none" stroke="currentColor"/&gt;
+    &lt;text dy="1.25em" style="font-size: 0.8em; letter-spacing: 1px"&gt;
+        &lt;textPath xlink:href="#arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-14" class="displacy-label" startOffset="50%" side="left" fill="currentColor" text-anchor="middle"&gt;nsubj&lt;/textPath&gt;
+    &lt;/text&gt;
+    &lt;path class="displacy-arrowhead" d="M2695,441.5 L2687,429.5 2703,429.5" fill="currentColor"/&gt;
+&lt;/g&gt;&lt;/p&gt;
+&lt;p&gt;&lt;g class="displacy-arrow"&gt;
+    &lt;path class="displacy-arc" id="arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-15" stroke-width="2px" d="M2170,439.5 C2170,89.5 2845.0,89.5 2845.0,439.5" fill="none" stroke="currentColor"/&gt;
+    &lt;text dy="1.25em" style="font-size: 0.8em; letter-spacing: 1px"&gt;
+        &lt;textPath xlink:href="#arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-15" class="displacy-label" startOffset="50%" side="left" fill="currentColor" text-anchor="middle"&gt;relcl&lt;/textPath&gt;
+    &lt;/text&gt;
+    &lt;path class="displacy-arrowhead" d="M2845.0,441.5 L2853.0,429.5 2837.0,429.5" fill="currentColor"/&gt;
+&lt;/g&gt;&lt;/p&gt;
+&lt;p&gt;&lt;g class="displacy-arrow"&gt;
+    &lt;path class="displacy-arc" id="arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-16" stroke-width="2px" d="M2870,439.5 C2870,352.0 3005.0,352.0 3005.0,439.5" fill="none" stroke="currentColor"/&gt;
+    &lt;text dy="1.25em" style="font-size: 0.8em; letter-spacing: 1px"&gt;
+        &lt;textPath xlink:href="#arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-16" class="displacy-label" startOffset="50%" side="left" fill="currentColor" text-anchor="middle"&gt;prt&lt;/textPath&gt;
+    &lt;/text&gt;
+    &lt;path class="displacy-arrowhead" d="M3005.0,441.5 L3013.0,429.5 2997.0,429.5" fill="currentColor"/&gt;
+&lt;/g&gt;&lt;/p&gt;
+&lt;p&gt;&lt;g class="displacy-arrow"&gt;
+    &lt;path class="displacy-arc" id="arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-17" stroke-width="2px" d="M2870,439.5 C2870,264.5 3185.0,264.5 3185.0,439.5" fill="none" stroke="currentColor"/&gt;
+    &lt;text dy="1.25em" style="font-size: 0.8em; letter-spacing: 1px"&gt;
+        &lt;textPath xlink:href="#arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-17" class="displacy-label" startOffset="50%" side="left" fill="currentColor" text-anchor="middle"&gt;prep&lt;/textPath&gt;
+    &lt;/text&gt;
+    &lt;path class="displacy-arrowhead" d="M3185.0,441.5 L3193.0,429.5 3177.0,429.5" fill="currentColor"/&gt;
+&lt;/g&gt;&lt;/p&gt;
+&lt;p&gt;&lt;g class="displacy-arrow"&gt;
+    &lt;path class="displacy-arc" id="arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-18" stroke-width="2px" d="M3395,439.5 C3395,352.0 3530.0,352.0 3530.0,439.5" fill="none" stroke="currentColor"/&gt;
+    &lt;text dy="1.25em" style="font-size: 0.8em; letter-spacing: 1px"&gt;
+        &lt;textPath xlink:href="#arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-18" class="displacy-label" startOffset="50%" side="left" fill="currentColor" text-anchor="middle"&gt;compound&lt;/textPath&gt;
+    &lt;/text&gt;
+    &lt;path class="displacy-arrowhead" d="M3395,441.5 L3387,429.5 3403,429.5" fill="currentColor"/&gt;
+&lt;/g&gt;&lt;/p&gt;
+&lt;p&gt;&lt;g class="displacy-arrow"&gt;
+    &lt;path class="displacy-arc" id="arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-19" stroke-width="2px" d="M420,439.5 C420,2.0 3550.0,2.0 3550.0,439.5" fill="none" stroke="currentColor"/&gt;
+    &lt;text dy="1.25em" style="font-size: 0.8em; letter-spacing: 1px"&gt;
+        &lt;textPath xlink:href="#arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-19" class="displacy-label" startOffset="50%" side="left" fill="currentColor" text-anchor="middle"&gt;punct&lt;/textPath&gt;
+    &lt;/text&gt;
+    &lt;path class="displacy-arrowhead" d="M3550.0,441.5 L3558.0,429.5 3542.0,429.5" fill="currentColor"/&gt;
+&lt;/g&gt;&lt;/p&gt;
+&lt;p&gt;&lt;g class="displacy-arrow"&gt;
+    &lt;path class="displacy-arc" id="arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-20" stroke-width="2px" d="M3570,439.5 C3570,352.0 3705.0,352.0 3705.0,439.5" fill="none" stroke="currentColor"/&gt;
+    &lt;text dy="1.25em" style="font-size: 0.8em; letter-spacing: 1px"&gt;
+        &lt;textPath xlink:href="#arrow-c1d4b15930c0417caaf7354a0c9d9d82-0-20" class="displacy-label" startOffset="50%" side="left" fill="currentColor" text-anchor="middle"&gt;&lt;/textPath&gt;
+    &lt;/text&gt;
+    &lt;path class="displacy-arrowhead" d="M3705.0,441.5 L3713.0,429.5 3697.0,429.5" fill="currentColor"/&gt;
+&lt;/g&gt;
+&lt;/svg&gt;&lt;/p&gt;
+&lt;p&gt;While the code block mentioned above is enough to render displacy in jupyter notebook, we need to use displacy.serve for other cases.&lt;/p&gt;
+&lt;h4&gt;Matcher&lt;/h4&gt;
+&lt;p&gt;So if we wanted to extract every word group that consisted of a noun following an adjective, how would we do that?&lt;/p&gt;
+&lt;p&gt;We can use Rule based matching to accomplish this.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;sentences&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;6751&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;“‘Jephro,’ said she, ‘there is an impertinent fellow upon the road
+there who stares up at Miss Hunter.’
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Import matcher.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;spacy.matcher&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;Matcher&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Instantiate the matcher with shared vocab of the doc.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;matcher&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Matcher&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;nlp&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;vocab&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Create a custom pattern and add it to the matcher.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;pattern&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[{&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;POS&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;ADJ&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt;
+           &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;POS&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;NOUN&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;OP&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;+&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;}]&lt;/span&gt;
+&lt;span class="n"&gt;matcher&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;add&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;CUSTOM_PATTERN&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="bp"&gt;None&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;pattern&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;note: "OP" can have one of four values:
+- '!' for 0 times
+- '?' for 0 or 1 time
+- '+' for 1 or more times
+- '*' for 0 or more times&lt;/p&gt;
+&lt;p&gt;We can add pattern to the matcher as well thorugh matcher.add()&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;matches&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;matcher&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;doc&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="nb"&gt;len&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;matches&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;3202
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;We can access the matched spans through loops.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;match_list&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;doc&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;start&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="n"&gt;end&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;match_id&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;start&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;end&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;matches&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;span class="n"&gt;match_list&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;100&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="mi"&gt;105&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;[other purposes, private note, own seal, little problem, serious one]
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;There's a lot more we can do with spacy, it is really well &lt;a href="https://spacy.io/usage/spacy-101"&gt;documented&lt;/a&gt; and easy to pick up. So if you're looking to do some more NLP alongside what &lt;a href="https://www.nltk.org/"&gt;nltk&lt;/a&gt; has to offer, check out spacy!&lt;/p&gt;</content></entry><entry><title>Blog 2 - Plotting ROC curve in Altair</title><link href="https://nawarani.github.io/blog/blog-2.html" rel="alternate"></link><published>2019-09-30T00:00:00-04:00</published><updated>2019-09-30T00:00:00-04:00</updated><author><name>Anika Nawar</name></author><id>tag:nawarani.github.io,2019-09-30:/blog/blog-2.html</id><summary type="html">&lt;p&gt;So you can make an ROC curve in pyplot but it looks like this.&lt;/p&gt;
 &lt;p&gt;&lt;img src = "https://i.imgur.com/3pEIjFt.png" width = 750&gt;&lt;/p&gt;
 &lt;p&gt;But fear not my friends, for Altair is here to fulfill all your aesthetic needs. In this amazing* blog I will introduce the ways of plotting an ROC curve in Altair.&lt;/p&gt;
 &lt;p&gt;In an ideal world, there …&lt;/p&gt;</summary><content type="html">&lt;p&gt;So you can make an ROC curve in pyplot but it looks like this.&lt;/p&gt;
