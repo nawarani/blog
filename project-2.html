@@ -1,38 +1,143 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-          <title>blog</title>
-        <meta charset="utf-8" />
+    <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+
+  <title>Project 2 - Predicting Housing Prices from Ames Housing Dataset</title>
+
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="referrer" content="origin" />
+  <meta name="generator" content="Pelican" />
+<link href="https://nawarani.github.io/blog/project-2.html" rel="canonical" />
+  <!-- Feed -->
         <link href="https://nawarani.github.io/blog/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="blog Full Atom Feed" />
-        <link href="https://nawarani.github.io/blog/feeds/misc.atom.xml" type="application/atom+xml" rel="alternate" title="blog Categories Atom Feed" />
+          <link href="https://nawarani.github.io/blog/feeds/{'slug': u'misc'}.atom.xml" type="application/atom+xml" rel="alternate" title="blog Categories Atom Feed" />
+
+  <link href="https://nawarani.github.io/blog/theme/css/style.css" type="text/css" rel="stylesheet" />
+
+  <!-- Code highlight color scheme -->
+      <link href="https://nawarani.github.io/blog/theme/css/code_blocks/github.css" rel="stylesheet">
+
+
+  <!-- Custom fonts -->
+  <link href='https://fonts.googleapis.com/css?family=Montserrat:400,300' rel='stylesheet' type='text/css' />
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css" />
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
 
 
 
+    <meta name="description" content="Modelling Ames housing data to predict prices Imports # imports import pandas as pd import numpy as np import matplotlib.pyplot as plt...">
+
+    <meta name="author" content="Anika Nawar">
+
+
+
+
+
+<!-- Open Graph -->
+<meta property="og:site_name" content="blog"/>
+<meta property="og:title" content="Project 2 - Predicting Housing Prices from Ames Housing Dataset"/>
+<meta property="og:description" content="Modelling Ames housing data to predict prices Imports # imports import pandas as pd import numpy as np import matplotlib.pyplot as plt..."/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="https://nawarani.github.io/blog/project-2.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2019-10-07 00:00:00-04:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="https://nawarani.github.io/blog/author/anika-nawar.html">
+<meta property="article:section" content="misc"/>
+<meta property="og:image" content="https://nawarani.github.io/blog/static/dennis_kummer_unsplash.jpg">
+
+<!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@anikanaw">
+    <meta name="twitter:title" content="Project 2 - Predicting Housing Prices from Ames Housing Dataset">
+    <meta name="twitter:url" content="https://nawarani.github.io/blog/project-2.html">
+
+        <meta name="twitter:image:src" content="https://nawarani.github.io/blog/static/dennis_kummer_unsplash.jpg">
+
+      <meta name="twitter:description" content="Modelling Ames housing data to predict prices Imports # imports import pandas as pd import numpy as np import matplotlib.pyplot as plt...">
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "name": "Project 2 - Predicting Housing Prices from Ames Housing Dataset",
+  "headline": "Project 2 - Predicting Housing Prices from Ames Housing Dataset",
+  "datePublished": "2019-10-07 00:00:00-04:00",
+  "dateModified": "",
+  "author": {
+    "@type": "Person",
+    "name": "Anika Nawar",
+    "url": "https://nawarani.github.io/blog/author/anika-nawar.html"
+  },
+  "image": "https://nawarani.github.io/blog/static/dennis_kummer_unsplash.jpg",
+  "url": "https://nawarani.github.io/blog/project-2.html",
+  "description": "Modelling Ames housing data to predict prices Imports # imports import pandas as pd import numpy as np import matplotlib.pyplot as plt..."
+}
+</script>
 </head>
+<!-- TODO : Body class -->
+<body class="home-template">
 
-<body id="index" class="home">
-        <header id="banner" class="body">
-                <h1><a href="https://nawarani.github.io/blog/">blog <strong></strong></a></h1>
-        </header><!-- /#banner -->
-        <nav id="menu"><ul>
-        </ul></nav><!-- /#menu -->
-<section id="content" class="body">
-  <header>
-    <h2 class="entry-title">
-      <a href="https://nawarani.github.io/blog/project-2.html" rel="bookmark"
-         title="Permalink to Project 2 - Predicting Housing Prices from Ames Housing Dataset">Project 2 - Predicting Housing Prices from Ames Housing Dataset</a></h2>
- 
-  </header>
-  <footer class="post-info">
-    <time class="published" datetime="2019-10-07T00:00:00-04:00">
-      Mon 07 October 2019
-    </time>
-    <address class="vcard author">
-      By           <a class="url fn" href="https://nawarani.github.io/blog/author/anika-nawar.html">Anika Nawar</a>
-    </address>
-  </footer><!-- /.post-info -->
-  <div class="entry-content">
-    <h1>Modelling Ames housing data to predict prices</h1>
+<nav id="menu">
+  <a class="close-button">Close</a>
+  <div class="nav-wrapper">
+    <p class="nav-label">Menu</p>
+    <ul>
+
+
+    </ul>
+  </div>
+</nav>
+    <!-- Progressbar -->
+    <div class="progress-container">
+        <span class="progress-bar"></span>
+    </div>
+
+    <!-- Page Header -->
+    <!-- Set your background image for this header on the line below. -->
+    <header id="post-header" class="has-cover">
+      <div class="inner">
+        <nav id="navigation">
+            <span id="home-button" class="nav-button">
+                <a class="home-button" href="https://nawarani.github.io/blog/" title="Home"><i class="ic ic-arrow-left"></i> Home</a>
+            </span>
+          <span id="menu-button" class="nav-button">
+            <a class="menu-button"><i class="ic ic-menu"></i> Menu</a>
+          </span>
+        </nav>
+        <h1 class="post-title">Project 2 - Predicting Housing Prices from Ames Housing Dataset</h1>
+        <!-- TODO : Proper class for headline -->
+        <span class="post-meta">
+                <a href="https://nawarani.github.io/blog/author/anika-nawar.html">Anika Nawar</a>
+            | <time datetime="Mon 07 October 2019">Mon 07 October 2019</time>
+        </span>
+        <!-- TODO : Modified check -->
+            <div class="post-cover cover" style="background-image: url('https://nawarani.github.io/blog/static/dennis_kummer_unsplash.jpg')">
+      </div>
+    </header>
+
+  <section id="wrapper">
+    <a class="hidden-close"></a>
+
+    <!-- Post content -->
+    <main class="content" role="main">
+        <article class="post">
+        <div class="inner">
+            <section class="post-content">
+                <h1>Modelling Ames housing data to predict prices</h1>
 <h3>Imports</h3>
 <div class="highlight"><pre><span></span><span class="c1"># imports</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
@@ -733,13 +838,53 @@
 
 
 <p><img alt="png" src="images/ames/output_60_0.png"></p>
-  </div><!-- /.entry-content -->
-</section>
-        <footer id="contentinfo" class="body">
-                <address id="about" class="vcard body">
-                Proudly powered by <a href="http://getpelican.com/">Pelican</a>,
-                which takes great advantage of <a href="http://python.org">Python</a>.
-                </address><!-- /#about -->
-        </footer><!-- /#contentinfo -->
+            </section>
+
+            <section class="post-info">
+                <div class="post-share">
+                    <a class="twitter" href="https://twitter.com/share?text=Project 2 - Predicting Housing Prices from Ames Housing Dataset&amp;url=https://nawarani.github.io/blog/project-2.html" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="ic ic-twitter"></i><span class="hidden">Twitter</span>
+                    </a>
+                    <a class="facebook" href="https://www.facebook.com/sharer/sharer.php?u=https://nawarani.github.io/blog/project-2.html" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="ic ic-facebook"></i><span class="hidden">Facebook</span>
+                    </a>
+                    <a class="googleplus" href="https://plus.google.com/share?url=https://nawarani.github.io/blog/project-2.html" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="ic ic-googleplus"></i><span class="hidden">Google+</span>
+                    </a>
+                    <div class="clear"></div>
+                </div>
+
+
+                <div class="clear"></div>
+
+
+                </section>
+
+
+                <aside class="post-nav">
+                    <div class="clear"></div>
+                </aside>
+
+            </div>
+        </article>
+    </main>
+      <!-- TODO : Body class -->
+    <div id="body-class" style="display: none;" class=""></div>
+
+    <footer id="footer">
+      <div class="inner">
+        <section class="credits">
+
+
+          <span class="credits-theme">Theme <a href="https://github.com/arulrajnet/attila" rel="nofollow">Attila</a></span>
+          <span class="credits-software">Published with <a href="https://github.com/getpelican/pelican" rel="nofollow">Pelican</a></span>
+        </section>
+      </div>
+    </footer>
+  </section>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script type="text/javascript" src="https://nawarani.github.io/blog/theme/js/script.js"></script>
+
 </body>
 </html>

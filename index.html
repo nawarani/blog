@@ -1,93 +1,212 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-        <title>blog</title>
-        <meta charset="utf-8" />
+      <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+
+  <title>blog</title>
+
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="referrer" content="origin" />
+  <meta name="generator" content="Pelican" />
+<link href="https://nawarani.github.io/blog/" rel="canonical" />
+  <!-- Feed -->
         <link href="https://nawarani.github.io/blog/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="blog Full Atom Feed" />
+
+  <link href="https://nawarani.github.io/blog/theme/css/style.css" type="text/css" rel="stylesheet" />
+
+  <!-- Code highlight color scheme -->
+      <link href="https://nawarani.github.io/blog/theme/css/code_blocks/github.css" rel="stylesheet">
+
+
+  <!-- Custom fonts -->
+  <link href='https://fonts.googleapis.com/css?family=Montserrat:400,300' rel='stylesheet' type='text/css' />
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css" />
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+
+
+
+<!-- Open Graph -->
+<meta property="og:site_name" content="blog"/>
+<meta property="og:type" content="blog"/>
+<meta property="og:title" content="blog"/>
+<meta property="og:description" content="View the blog."/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="https://nawarani.github.io/blog/"/>
+<meta property="og:image" content="https://nawarani.github.io/blog/static/dennis_kummer_unsplash.jpg">
+
+<!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@anikanaw">
+  <meta name="twitter:title" content="blog">
+  <meta name="twitter:description" content="View the blog.">
+  <meta name="twitter:url" content="https://nawarani.github.io/blog/">
+  <meta name="twitter:image:src" content="https://nawarani.github.io/blog/static/dennis_kummer_unsplash.jpg">
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Website",
+  "name": " blog ",
+  "url" : "https://nawarani.github.io/blog/",
+  "image": "https://nawarani.github.io/blog/static/dennis_kummer_unsplash.jpg",
+  "description": "View the blog."
+}
+</script>
 </head>
+<!-- TODO : Body class -->
+<body class="home-template">
 
-<body id="index" class="home">
-        <header id="banner" class="body">
-                <h1><a href="https://nawarani.github.io/blog/">blog <strong></strong></a></h1>
-        </header><!-- /#banner -->
-        <nav id="menu"><ul>
-        </ul></nav><!-- /#menu -->
-<section id="content">
-<h2>All articles</h2>
-
-<ol id="post-list">
-        <li><article class="hentry">
-                <header> <h2 class="entry-title"><a href="https://nawarani.github.io/blog/blog-3.html" rel="bookmark" title="Permalink to Blog 3 - Intro to Naural Language Processing with spaCy">Blog 3 - Intro to Naural Language Processing with spaCy</a></h2> </header>
-                <footer class="post-info">
-                    <time class="published" datetime="2019-10-07T00:00:00-04:00"> Mon 07 October 2019 </time>
-                    <address class="vcard author">By
-                        <a class="url fn" href="https://nawarani.github.io/blog/author/anika-nawar.html">Anika Nawar</a>
-                    </address>
-                </footer><!-- /.post-info -->
-                <div class="entry-content"> <h2>spaCy</h2>
-<p>spaCy is a natural language processing library for python. Some of its features are:
-- non-destructive tokenization,
-- named entity recognition,
-- pre-trained models
-- support for 52+ individual langueages.</p>
-<p>Since coding is best explained through examples, in this blog, we will use spacy to work through a book from <a href="http://www.gutenberg.org/ebooks/1661">Project Gutenberg</a>.</p>
-<h3>Finding …</h3> </div><!-- /.entry-content -->
-        </article></li>
-        <li><article class="hentry">
-                <header> <h2 class="entry-title"><a href="https://nawarani.github.io/blog/project-2.html" rel="bookmark" title="Permalink to Project 2 - Predicting Housing Prices from Ames Housing Dataset">Project 2 - Predicting Housing Prices from Ames Housing Dataset</a></h2> </header>
-                <footer class="post-info">
-                    <time class="published" datetime="2019-10-07T00:00:00-04:00"> Mon 07 October 2019 </time>
-                    <address class="vcard author">By
-                        <a class="url fn" href="https://nawarani.github.io/blog/author/anika-nawar.html">Anika Nawar</a>
-                    </address>
-                </footer><!-- /.post-info -->
-                <div class="entry-content"> <h1>Modelling Ames housing data to predict prices</h1>
-<h3>Imports</h3>
-<div class="highlight"><pre><span></span><span class="c1"># imports</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">seaborn</span> <span class="kn">as</span> <span class="nn">sns</span>
-<span class="kn">import</span> <span class="nn">altair</span> <span class="kn">as</span> <span class="nn">alt</span>
-
-<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">Lasso</span><span class="p">,</span> <span class="n">LassoCV</span><span class="p">,</span> <span class="n">LinearRegression</span><span class="p">,</span> <span class="n">Ridge</span><span class="p">,</span> <span class="n">RANSACRegressor</span>
+<nav id="menu">
+  <a class="close-button">Close</a>
+  <div class="nav-wrapper">
+    <p class="nav-label">Menu</p>
+    <ul>
 
 
-<span class="kn">from</span> <span class="nn">sklearn_pandas</span> <span class="kn">import</span> <span class="n">CategoricalImputer</span>
-<span class="kn">from</span> <span class="nn">sklearn_pandas</span> <span class="kn">import</span> <span class="n">DataFrameMapper</span>
-<span class="kn">from</span> <span class="nn">sklearn.preprocessing …</span></pre></div> </div><!-- /.entry-content -->
-        </article></li>
-        <li><article class="hentry">
-                <header> <h2 class="entry-title"><a href="https://nawarani.github.io/blog/blog-2.html" rel="bookmark" title="Permalink to Blog 2 - Plotting ROC curve in Altair">Blog 2 - Plotting ROC curve in Altair</a></h2> </header>
-                <footer class="post-info">
-                    <time class="published" datetime="2019-09-30T00:00:00-04:00"> Mon 30 September 2019 </time>
-                    <address class="vcard author">By
-                        <a class="url fn" href="https://nawarani.github.io/blog/author/anika-nawar.html">Anika Nawar</a>
-                    </address>
-                </footer><!-- /.post-info -->
-                <div class="entry-content"> <p>So you can make an ROC curve in pyplot but it looks like this.</p>
-<p><img src = "https://i.imgur.com/3pEIjFt.png" width = 750></p>
-<p>But fear not my friends, for Altair is here to fulfill all your aesthetic needs. In this amazing* blog I will introduce the ways of plotting an ROC curve in Altair.</p>
-<p>In an ideal world, there …</p> </div><!-- /.entry-content -->
-        </article></li>
-        <li><article class="hentry">
-                <header> <h2 class="entry-title"><a href="https://nawarani.github.io/blog/blog-1.html" rel="bookmark" title="Permalink to Blog 1- Least Angle Regression LARS">Blog 1- Least Angle Regression LARS</a></h2> </header>
-                <footer class="post-info">
-                    <time class="published" datetime="2019-09-16T00:00:00-04:00"> Mon 16 September 2019 </time>
-                    <address class="vcard author">By
-                        <a class="url fn" href="https://nawarani.github.io/blog/author/anika-nawar.html">Anika Nawar</a>
-                    </address>
-                </footer><!-- /.post-info -->
-                <div class="entry-content"> <h2>What is LARS?</h2>
-<p>Before we get into what lars is, we must take a peek into forward selection and forward stagewise regression. LARs treats each feature of the data as a vector and moves in a direction to minimizethe difference between its angle with equally likely features. For simplicity, we …</p> </div><!-- /.entry-content -->
-        </article></li>
-</ol><!-- /#posts-list -->
-</section><!-- /#content -->
-        <footer id="contentinfo" class="body">
-                <address id="about" class="vcard body">
-                Proudly powered by <a href="http://getpelican.com/">Pelican</a>,
-                which takes great advantage of <a href="http://python.org">Python</a>.
-                </address><!-- /#about -->
-        </footer><!-- /#contentinfo -->
+    </ul>
+  </div>
+</nav>
+    <!-- Page Header -->
+    <!-- Set your background image for this header on the line below. -->
+    <header id="blog-header" class="has-cover">
+      <div class="inner">
+        <nav id="navigation">
+          <span id="menu-button" class="nav-button">
+            <a class="menu-button"><i class="ic ic-menu"></i> Menu</a>
+          </span>
+        </nav>
+        <h1 class="blog-name"><a href="https://nawarani.github.io/blog/">blog</a></h1>
+
+          <div class="blog-cover cover" style="background-image: url('https://nawarani.github.io/blog/static/dennis_kummer_unsplash.jpg')">
+      </div>
+    </header>
+
+
+  <section id="wrapper">
+    <a class="hidden-close"></a>
+
+<div id="index" class="container">
+  <main class="content" role="main">
+    <div class="extra-pagination">
+<nav class="pagination" role="pagination">
+  <div class="inner">
+    <span class="pagination-info">Page 1 / 1</span>
+    <div class="clear"></div>
+  </div>
+</nav>
+    </div>
+
+        <article class="post">
+        <div class="inner">
+            <header class="post-header">
+                <h2 class="post-title"><a href="https://nawarani.github.io/blog/blog-3.html" rel="bookmark" title="Permalink to Blog 3 - Intro to Naural Language Processing with spaCy">Blog 3 - Intro to Naural Language Processing with spaCy</a>
+                </h2>
+                <span class="post-meta">
+                        <a href="https://nawarani.github.io/blog/author/anika-nawar.html">Anika Nawar</a>
+                     | <time datetime="Mon 07 October 2019">Mon 07 October 2019</time>
+                </span>
+                <div class="clear"></div>
+            </header>
+                <section class="post-excerpt">
+                    <p>
+                        spaCy spaCy is a natural language processing library for python. Some of its features are: - non-destructive tokenization, - named entity recognition, - pre-trained models - support for 52+ individual langueages. Since coding is best explained...
+                    </p>
+                </section>
+            </div>
+        </article>
+        <article class="post">
+        <div class="inner">
+            <header class="post-header">
+                <h2 class="post-title"><a href="https://nawarani.github.io/blog/project-2.html" rel="bookmark" title="Permalink to Project 2 - Predicting Housing Prices from Ames Housing Dataset">Project 2 - Predicting Housing Prices from Ames Housing Dataset</a>
+                </h2>
+                <span class="post-meta">
+                        <a href="https://nawarani.github.io/blog/author/anika-nawar.html">Anika Nawar</a>
+                     | <time datetime="Mon 07 October 2019">Mon 07 October 2019</time>
+                </span>
+                <div class="clear"></div>
+            </header>
+                <section class="post-excerpt">
+                    <p>
+                        Modelling Ames housing data to predict prices Imports # imports import pandas as pd import numpy as np import matplotlib.pyplot as plt import seaborn as sns import altair as alt from sklearn.linear_model import Lasso, LassoCV, LinearRegression,...
+                    </p>
+                </section>
+            </div>
+        </article>
+        <article class="post">
+        <div class="inner">
+            <header class="post-header">
+                <h2 class="post-title"><a href="https://nawarani.github.io/blog/blog-2.html" rel="bookmark" title="Permalink to Blog 2 - Plotting ROC curve in Altair">Blog 2 - Plotting ROC curve in Altair</a>
+                </h2>
+                <span class="post-meta">
+                        <a href="https://nawarani.github.io/blog/author/anika-nawar.html">Anika Nawar</a>
+                     | <time datetime="Mon 30 September 2019">Mon 30 September 2019</time>
+                </span>
+                <div class="clear"></div>
+            </header>
+                <section class="post-excerpt">
+                    <p>
+                        So you can make an ROC curve in pyplot but it looks like this. But fear not my friends, for Altair is here to fulfill all your aesthetic needs. In this amazing* blog I will introduce the ways of plotting an ROC curve in Altair. In an ideal world, there …
+                    </p>
+                </section>
+            </div>
+        </article>
+        <article class="post">
+        <div class="inner">
+            <header class="post-header">
+                <h2 class="post-title"><a href="https://nawarani.github.io/blog/blog-1.html" rel="bookmark" title="Permalink to Blog 1- Least Angle Regression LARS">Blog 1- Least Angle Regression LARS</a>
+                </h2>
+                <span class="post-meta">
+                        <a href="https://nawarani.github.io/blog/author/anika-nawar.html">Anika Nawar</a>
+                     | <time datetime="Mon 16 September 2019">Mon 16 September 2019</time>
+                </span>
+                <div class="clear"></div>
+            </header>
+                <section class="post-excerpt">
+                    <p>
+                        What is LARS? Before we get into what lars is, we must take a peek into forward selection and forward stagewise regression. LARs treats each feature of the data as a vector and moves in a direction to minimizethe difference between its angle with...
+                    </p>
+                </section>
+            </div>
+        </article>
+
+<nav class="pagination" role="pagination">
+  <div class="inner">
+    <span class="pagination-info">Page 1 / 1</span>
+    <div class="clear"></div>
+  </div>
+</nav>
+  </main>
+</div>
+      <!-- TODO : Body class -->
+    <div id="body-class" style="display: none;" class=""></div>
+
+    <footer id="footer">
+      <div class="inner">
+        <section class="credits">
+
+
+          <span class="credits-theme">Theme <a href="https://github.com/arulrajnet/attila" rel="nofollow">Attila</a></span>
+          <span class="credits-software">Published with <a href="https://github.com/getpelican/pelican" rel="nofollow">Pelican</a></span>
+        </section>
+      </div>
+    </footer>
+  </section>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script type="text/javascript" src="https://nawarani.github.io/blog/theme/js/script.js"></script>
+
 </body>
 </html>
