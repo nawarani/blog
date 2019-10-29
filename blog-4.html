@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+
+  <title>Targeting Elements in Selenium</title>
+
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="referrer" content="origin" />
+  <meta name="generator" content="Pelican" />
+<link href="https://nawarani.github.io/blog-4.html" rel="canonical" />
+  <!-- Feed -->
+        <link href="https://nawarani.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Anika's blog Full Atom Feed" />
+          <link href="https://nawarani.github.io/feeds/{'slug': u'misc'}.atom.xml" type="application/atom+xml" rel="alternate" title="Anika's blog Categories Atom Feed" />
+
+  <link href="https://nawarani.github.io/theme/css/style.css" type="text/css" rel="stylesheet" />
+
+  <!-- Code highlight color scheme -->
+      <link href="https://nawarani.github.io/theme/css/code_blocks/github.css" rel="stylesheet">
+
+
+  <!-- Custom fonts -->
+  <link href='https://fonts.googleapis.com/css?family=Montserrat:400,300' rel='stylesheet' type='text/css' />
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css" />
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+
+
+    <meta name="description" content="In recognition of the 39k people using this browser automation tool, I will be working with this tool until I have resolved my...">
+
+    <meta name="author" content="Anika Nawar">
+
+
+
+
+
+<!-- Open Graph -->
+<meta property="og:site_name" content="Anika's blog"/>
+<meta property="og:title" content="Targeting Elements in Selenium"/>
+<meta property="og:description" content="In recognition of the 39k people using this browser automation tool, I will be working with this tool until I have resolved my..."/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="https://nawarani.github.io/blog-4.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2019-10-28 00:00:00-04:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="https://nawarani.github.io/author/anika-nawar.html">
+<meta property="article:section" content="misc"/>
+<meta property="og:image" content="https://images.unsplash.com/photo-1432821596592-e2c18b78144f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80">
+
+<!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@anikanaw">
+    <meta name="twitter:title" content="Targeting Elements in Selenium">
+    <meta name="twitter:url" content="https://nawarani.github.io/blog-4.html">
+
+        <meta name="twitter:image:src" content="https://images.unsplash.com/photo-1432821596592-e2c18b78144f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80">
+
+      <meta name="twitter:description" content="In recognition of the 39k people using this browser automation tool, I will be working with this tool until I have resolved my...">
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "name": "Targeting Elements in Selenium",
+  "headline": "Targeting Elements in Selenium",
+  "datePublished": "2019-10-28 00:00:00-04:00",
+  "dateModified": "",
+  "author": {
+    "@type": "Person",
+    "name": "Anika Nawar",
+    "url": "https://nawarani.github.io/author/anika-nawar.html"
+  },
+  "image": "https://images.unsplash.com/photo-1432821596592-e2c18b78144f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80",
+  "url": "https://nawarani.github.io/blog-4.html",
+  "description": "In recognition of the 39k people using this browser automation tool, I will be working with this tool until I have resolved my..."
+}
+</script>
+</head>
+<!-- TODO : Body class -->
+<body class="home-template">
+
+<nav id="menu">
+  <a class="close-button">Close</a>
+  <div class="nav-wrapper">
+    <p class="nav-label">Menu</p>
+    <ul>
+
+
+    </ul>
+  </div>
+</nav>
+    <!-- Progressbar -->
+    <div class="progress-container">
+        <span class="progress-bar"></span>
+    </div>
+
+    <!-- Page Header -->
+    <!-- Set your background image for this header on the line below. -->
+    <header id="post-header" class="has-cover">
+      <div class="inner">
+        <nav id="navigation">
+            <span id="home-button" class="nav-button">
+                <a class="home-button" href="https://nawarani.github.io/" title="Home"><i class="ic ic-arrow-left"></i> Home</a>
+            </span>
+          <span id="menu-button" class="nav-button">
+            <a class="menu-button"><i class="ic ic-menu"></i> Menu</a>
+          </span>
+        </nav>
+        <h1 class="post-title">Targeting Elements in Selenium</h1>
+        <!-- TODO : Proper class for headline -->
+        <span class="post-meta">
+                <a href="https://nawarani.github.io/author/anika-nawar.html">Anika Nawar</a>
+            | <time datetime="Mon 28 October 2019">Mon 28 October 2019</time>
+        </span>
+        <!-- TODO : Modified check -->
+            <div class="post-cover cover" style="background-image: url('https://images.unsplash.com/photo-1432821596592-e2c18b78144f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80')">
+      </div>
+    </header>
+
+  <section id="wrapper">
+    <a class="hidden-close"></a>
+
+    <!-- Post content -->
+    <main class="content" role="main">
+        <article class="post">
+        <div class="inner">
+            <section class="post-content">
+                <p>In recognition of the 39k people using this browser automation tool, I will be working with this tool until I have resolved my conflicts, or lost all my hair - whichever happens first.</p>
+<p>For the purposes of not being vague, I think what I struggled most trying to spin up a simple example of going through multiple nested pages to extract information is things not working. Like the lamb I am, I have resorted to the internet every time selenium has hit me with errors (with web drivers, web drivers not being in path, multiple packages not existing, the web driver simply not working) and the internet has not been  able to resolve my conflicts very easily. But even all of that does not start to compare to the frustration that has come out of me trying to target elements in selenium. At multilple stages of working through this blog I have thought of ways I can simply extract href information through beatifulsoup and used that to scrape a nested page instead of having to target the element in selenium to .click()</p>
+<p>But in this house we do not accept defeat so here I am with my blog about how to target elements in selenium.</p>
+<h2>Install Selenium and webdrivers</h2>
+<p>Installing selenium is fairly simple:</p>
+<div class="highlight"><pre><span></span><span class="c1"># ! pip install selenium</span>
+</pre></div>
+
+
+<p>To get Selenium working, you will need a webdriver. Chromedriver for chrome, geckodriver for firefox. The webdriver file needs to be in the PATH. After a few hours spent on <a href="https://stackoverflow.com/questions/29858752/error-message-chromedriver-executable-needs-to-be-available-in-the-path">stackoverflow</a>, I achieved this through placing the file in the bin inside anacoda folder.</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">selenium</span> <span class="kn">import</span> <span class="n">webdriver</span>
+<span class="kn">from</span> <span class="nn">selenium.webdriver.support.ui</span> <span class="kn">import</span> <span class="n">WebDriverWait</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="n">URL</span> <span class="o">=</span> <span class="s1">&#39;https://www.seleniumhq.org/&#39;</span>
+<span class="n">driver</span> <span class="o">=</span> <span class="n">webdriver</span><span class="o">.</span><span class="n">Firefox</span><span class="p">()</span>
+<span class="n">driver</span><span class="o">.</span><span class="n">implicitly_wait</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>
+<span class="n">driver</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">URL</span><span class="p">)</span>
+</pre></div>
+
+
+<p>Taking a quick look inside dir(driver), we find a few options to target elements.</p>
+<div class="highlight"><pre><span></span><span class="nb">dir</span><span class="p">(</span><span class="n">driver</span><span class="p">)[</span><span class="mi">58</span><span class="p">:</span><span class="mi">76</span><span class="p">]</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>[&#39;find_element&#39;,
+ &#39;find_element_by_class_name&#39;,
+ &#39;find_element_by_css_selector&#39;,
+ &#39;find_element_by_id&#39;,
+ &#39;find_element_by_link_text&#39;,
+ &#39;find_element_by_name&#39;,
+ &#39;find_element_by_partial_link_text&#39;,
+ &#39;find_element_by_tag_name&#39;,
+ &#39;find_element_by_xpath&#39;,
+ &#39;find_elements&#39;,
+ &#39;find_elements_by_class_name&#39;,
+ &#39;find_elements_by_css_selector&#39;,
+ &#39;find_elements_by_id&#39;,
+ &#39;find_elements_by_link_text&#39;,
+ &#39;find_elements_by_name&#39;,
+ &#39;find_elements_by_partial_link_text&#39;,
+ &#39;find_elements_by_tag_name&#39;,
+ &#39;find_elements_by_xpath&#39;]
+</pre></div>
+
+
+<p>Notice that for every method listed here, there's a elements version of it that targets multiple items on the page.</p>
+<h2>find_element_by_class_name</h2>
+<p>Now that we have spun up a browser, let's try to find the download button for selenium. Through a quick inspection, we see that the download button can be targeted through the div with a class name of "downloadBox"</p>
+<div class="highlight"><pre><span></span><span class="n">driver</span><span class="o">.</span><span class="n">find_element_by_class_name</span><span class="p">(</span><span class="s1">&#39;downloadBox&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">click</span><span class="p">()</span>
+</pre></div>
+
+
+<p>.click() clicks the button and brings us to the download page. Multiple targets can be found by using find_elements_by_class_name.</p>
+<h2>find_element_by_css_selector</h2>
+<p>I found this useful to target something like a table, since css selectors such as p tags, a tags and divs are far too general to target specific elements.</p>
+<div class="highlight"><pre><span></span><span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">text</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">driver</span><span class="o">.</span><span class="n">find_elements_by_css_selector</span><span class="p">(</span><span class="s1">&#39;tr&#39;</span><span class="p">)][</span><span class="mi">1</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>[&#39;Java 3.141.59 2018-11-14 Download   Change log   Javadoc&#39;,
+ &#39;C# 3.14.0 2018-08-02 Download Change log API docs&#39;,
+ &#39;Ruby 3.14.0 2018-08-03 Download Change log API docs&#39;,
+ &#39;Python 3.14.0 2018-08-02 Download Change log API docs&#39;,
+ &#39;Javascript (Node) 4.0.0-alpha.1 2018-01-13 Download Change log API docs&#39;]
+</pre></div>
+
+
+<h2>find_element_by_class_name</h2>
+<p>I find that targeting an element by id is the safest way, since no two elements in a page will have the same id. The downside of it, though is that we cannot target multiple elements in the page thorugh one id.</p>
+<div class="highlight"><pre><span></span><span class="n">driver</span><span class="o">.</span><span class="n">find_element_by_id</span><span class="p">(</span><span class="s1">&#39;menu_documentation&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">click</span><span class="p">()</span>
+</pre></div>
+
+
+<h2>find_element_by_xpath</h2>
+<p>I was expecting id or classname to be the easiest way to target something on the page, but it turned out to be through xpath. Partly because how easy it is to get the xpath of an element.</p>
+<p><img alt="" src="https://i.imgur.com/8GvUXku.jpg"></p>
+<div class="highlight"><pre><span></span><span class="n">x_path</span> <span class="o">=</span> <span class="s1">&#39;/html/body/div[3]/div[2]/div[2]/div[2]/ul/li[3]/input&#39;</span>
+<span class="n">driver</span><span class="o">.</span><span class="n">find_element_by_xpath</span><span class="p">(</span><span class="n">x_path</span><span class="p">)</span><span class="o">.</span><span class="n">click</span><span class="p">()</span>
+</pre></div>
+
+
+<h2>find_element_by_name</h2>
+<p>Items inside a form have names and can be targeted using their names. In this case, we will be targetting the search input at the top of the page.</p>
+<div class="highlight"><pre><span></span><span class="n">driver</span><span class="o">.</span><span class="n">find_element_by_name</span><span class="p">(</span><span class="s1">&#39;q&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>&lt;selenium.webdriver.firefox.webelement.FirefoxWebElement (session=&quot;aafb89e2-4968-4778-9939-310512d75018&quot;, element=&quot;e493bb0b-06e1-4b45-b850-1b860d09fbd7&quot;)&gt;
+</pre></div>
+
+
+<p>Perhaps one of seleniums strengths lie in automated form completeion, which I will explore in another blog when I manage to be more comfortable with selenium.</p>
+<p>The only use case of find_element I have found seem to be paired with By, which in turn achieves the same results as the mentioned methods.Targeting through tag name, link text and partial link text also exists. In most cases the functionality of targeting thorugh a tag name should be achievable thorugh css selectors. link text and partial link text has thie own usage but id, class_name and css selector targetting covered the broad share of my needs. Xpath, to me is the last resort for items that are notoriously hard to separate from the rest of the page.</p>
+            </section>
+
+            <section class="post-info">
+                <div class="post-share">
+                    <a class="twitter" href="https://twitter.com/share?text=Targeting Elements in Selenium&amp;url=https://nawarani.github.io/blog-4.html" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="ic ic-twitter"></i><span class="hidden">Twitter</span>
+                    </a>
+                    <a class="facebook" href="https://www.facebook.com/sharer/sharer.php?u=https://nawarani.github.io/blog-4.html" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="ic ic-facebook"></i><span class="hidden">Facebook</span>
+                    </a>
+                    <a class="googleplus" href="https://plus.google.com/share?url=https://nawarani.github.io/blog-4.html" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="ic ic-googleplus"></i><span class="hidden">Google+</span>
+                    </a>
+                    <div class="clear"></div>
+                </div>
+
+
+                <div class="clear"></div>
+
+
+                </section>
+
+
+                <aside class="post-nav">
+                    <div class="clear"></div>
+                </aside>
+
+            </div>
+        </article>
+    </main>
+      <!-- TODO : Body class -->
+    <div id="body-class" style="display: none;" class=""></div>
+
+    <footer id="footer">
+      <div class="inner">
+        <section class="credits">
+
+
+          <span class="credits-theme">Theme <a href="https://github.com/arulrajnet/attila" rel="nofollow">Attila</a></span>
+          <span class="credits-software">Published with <a href="https://github.com/getpelican/pelican" rel="nofollow">Pelican</a></span>
+        </section>
+      </div>
+    </footer>
+  </section>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script type="text/javascript" src="https://nawarani.github.io/theme/js/script.js"></script>
+
+</body>
+</html>
