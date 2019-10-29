@@ -1,6 +1,7 @@
-Title: Blog 3 - Intro to Naural Language Processing with spaCy
+Title: Intro to Naural Language Processing with spaCy
 Date: 10-07-2019
 Slug: blog-3
+cover: https://images.unsplash.com/photo-1561651188-d207bbec4ec3?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1267&q=80
 
 ## spaCy
 

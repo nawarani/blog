@@ -1,6 +1,7 @@
-Title: Blog 2 - Plotting ROC curve in Altair
+Title: Plotting ROC curve in Altair
 Date: 09-30-2019
 Slug: blog-2
+cover: https://images.unsplash.com/photo-1543286386-713bdd548da4?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1350&q=80
 
 So you can make an ROC curve in pyplot but it looks like this.
 

@@ -1,6 +1,7 @@
-Title: Blog 1- Least Angle Regression LARS
-Date: 09-16-2019 
+Title: Least Angle Regression LARS
+Date: 09-16-2019
 Slug: blog-1
+cover: https://images.unsplash.com/photo-1526628953301-3e589a6a8b74?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1295&q=80
 
 ## What is LARS?
 
@@ -8,14 +9,14 @@ Before we get into what lars is, we must take a peek into forward selection and 
 
 **Forward selection** is a selection method where in each step the model takes in the variable with highest correlation entirely and continues to predict. This is great, except when there are two correlated variables. In the case of multiple correlated variables, forward selection ends up ignoring the other ones, since after adding one of the correlated variable, the rest don't offer much explanation to the model anymore.
 
-Here, you've gone into best buy to buy a keyboard, since it is your biggest concern. Since the mouse is highly likely to be found in best buy as well, forward selection will skip mouse and predict that you will go to canada computers next. Since it will skip the path inside best buy towards the mouse section, it won't be as accurate. 
+Here, you've gone into best buy to buy a keyboard, since it is your biggest concern. Since the mouse is highly likely to be found in best buy as well, forward selection will skip mouse and predict that you will go to canada computers next. Since it will skip the path inside best buy towards the mouse section, it won't be as accurate.
 
 <!-- ![](https://i.imgur.com/bnlSHBX.jpg) -->
 <img src="https://i.imgur.com/bnlSHBX.jpg" alt="drawing" width=500/>
 
 **Forward stagewise regression** on the other hand, solves this problem by only adding a predetermined amount of a variable. Since it doesn't add the entirity of a variable, other correlated variables are still considered and added in accordingly. But due to the process, forward stagewise ends up being very inefficient when there are a lot of variables to consider.
 
-In this case, our model is being very cautious of your path and updating it every step at a time. Since you are likely to go into best buy to find keyboard first, it will predict your path to best buy one step at a time. At every step it will reevaluate whether you are closer to the store for keyboard, mouse or graphics card, and update its path accordingly. This is great, since this time around the model will be more accurate in its prediction. But if we had 50 things in our list, this model would quickly become burdensome, having to calculate at each step. 
+In this case, our model is being very cautious of your path and updating it every step at a time. Since you are likely to go into best buy to find keyboard first, it will predict your path to best buy one step at a time. At every step it will reevaluate whether you are closer to the store for keyboard, mouse or graphics card, and update its path accordingly. This is great, since this time around the model will be more accurate in its prediction. But if we had 50 things in our list, this model would quickly become burdensome, having to calculate at each step.
 
 <!-- ![](https://i.imgur.com/DeW8EPm.jpg) -->
 <img src="https://i.imgur.com/DeW8EPm.jpg" alt="drawing" width=500/>
@@ -82,7 +83,7 @@ predict(X)
 
 returns prediction values based on the model
 
-score(X, y)	
+score(X, y)
 
 returns r2 score of prediction
 
@@ -160,7 +161,7 @@ print(r2_score(y_test, y_hat_test))
 
     0.7434997532004697
     0.7112260057484925
-    
+
 
 From the values above, we can see that our model is predicting the train set better than test set, implying overfit. To not overfit, we need to take off some of the features and see if the model works better. So we will call the coefficients for the lars model and see which features should be kept.
 
@@ -205,4 +206,3 @@ print(r2_score(y_test, lars_model_preds))
 
     0.5637706488700117
     0.5491875651414488
-    
